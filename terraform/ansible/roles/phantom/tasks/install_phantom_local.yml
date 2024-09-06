@@ -1,22 +1,22 @@
 ---
 - name: Change mirror to vault.centos.org
   shell: sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
-  become: yes
+  become: True
 
 - name: Uncomment baseurl lines
   shell: sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
-  become: yes
+  become: True
 
 - name: Comment out mirrorlist lines
   shell: sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
-  become: yes
+  become: True
 
 - name: Update all packages
   yum:
     name: "*"
     state: latest
     update_cache: yes
-  become: yes
+  become: True
 
 - name: Creates directory
   file:
@@ -27,12 +27,12 @@
   unarchive:
     src: "../../apps/{{ phantom_server.phantom_app }}"
     dest: /home/vagrant
-  become: yes
+  become: True
   become_user: vagrant
 
 - name: prepare phantom install script without apps
   shell: /home/vagrant/splunk-soar/soar-prepare-system --splunk-soar-home /opt/soar --no-prompt
-  become: yes
+  become: True
   environment:
     http_proxy: ""
     https_proxy: ""
@@ -44,7 +44,7 @@
   shell: chown -R phantom. /home/phantom/splunk-soar
 
 - name: run the phantom install script
-  become: yes
+  become: True
   become_user: phantom
   shell: ./soar-install --splunk-soar-home /opt/soar --no-prompt --ignore-warnings
   args:

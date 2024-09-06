@@ -8,7 +8,7 @@
 
 - name: install splunk binary
   unarchive: remote_src=yes src=/opt/splunk.tgz dest=/opt/ creates=yes
-  become: yes
+  become: True
 
 - name: migrate to WiredTiger
   blockinfile:
@@ -21,7 +21,7 @@
 
 - name: accept license and start splunk
   shell: /opt/splunk/bin/splunk start --accept-license --answer-yes --no-prompt --seed-passwd Pl3ase-k1Ll-me:p
-  become: yes
+  become: True
 
 - name: enable boot-start
   shell: /opt/splunk/bin/splunk enable boot-start

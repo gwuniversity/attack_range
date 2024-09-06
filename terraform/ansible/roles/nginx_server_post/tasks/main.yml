@@ -1,6 +1,6 @@
 ---
 
-- name: copy default.conf to add the proxy information 
+- name: copy default.conf to add the proxy information
   template:
     src: default.conf.j2
     dest: /etc/nginx/conf.d/default.conf
@@ -15,16 +15,16 @@
 
 - name: change password splunk
   shell: '/opt/splunkforwarder/bin/splunk edit user admin -password {{ general.attack_range_password }} -auth admin:Pl3ase-k1Ll-me:p'
-  become: yes
-  ignore_errors: yes
+  become: True
+  ignore_errors: True
 
 - name: Change hostname
   shell: '/opt/splunkforwarder/bin/splunk set default-hostname {{ nginx_server.hostname }} -auth admin:{{ general.attack_range_password }}'
-  become: yes
+  become: True
 
 - name: Change servername
   shell: '/opt/splunkforwarder/bin/splunk set servername {{ nginx_server.hostname }} -auth admin:{{ general.attack_range_password }}'
-  become: yes
+  become: True
 
 - name: Restart splunk uf
   become: true

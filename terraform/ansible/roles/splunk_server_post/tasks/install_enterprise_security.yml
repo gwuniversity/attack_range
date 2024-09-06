@@ -1,4 +1,3 @@
-
 - name: Uninstall ML Toolkit
   uri:
     url: "https://127.0.0.1:8089/services/apps/local/Splunk_ML_Toolkit"
@@ -8,7 +7,7 @@
     validate_certs: false
     headers:
       Content-Type: "application/x-www-form-urlencoded"
-    status_code: [ 200, 201 ]
+    status_code: [200, 201]
     timeout: 30
 
 - name: Uninstall Python Scientific Computing
@@ -20,12 +19,12 @@
     validate_certs: false
     headers:
       Content-Type: "application/x-www-form-urlencoded"
-    status_code: [ 200, 201 ]
+    status_code: [200, 201]
     timeout: 300
 
 - name: restart splunk
   service: name=splunk state=restarted
-  become: yes
+  become: True
 
 - name: Copy enterprise security to server
   copy:
@@ -42,19 +41,19 @@
     body: "name=/tmp/es_app.tgz&update=true&filename=true"
     headers:
       Content-Type: "application/x-www-form-urlencoded"
-    status_code: [ 200, 201 ]
+    status_code: [200, 201]
     timeout: 120
 
 - name: restart splunk
   service: name=splunk state=restarted
-  become: yes
+  become: True
 
 - name: Run es post-install setup
   command: "/opt/splunk/bin/splunk search '| essinstall --ssl_enablement auto' -auth admin:{{ general.attack_range_password }}"
-  become: yes
+  become: True
   async: 600
   poll: 60
 
 - name: restart splunk
   service: name=splunk state=restarted
-  become: yes
+  become: True
