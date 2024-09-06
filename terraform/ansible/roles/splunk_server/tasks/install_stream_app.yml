@@ -5,7 +5,7 @@
 
 - name: download Stream app from S3 bucket
   get_url:
-    url: '{{ s3_bucket_url }}/{{ splunk_stream_app }}'
+    url: "{{ s3_bucket_url }}/{{ splunk_stream_app }}"
     dest: /tmp/splunk-app-for-stream_730.tgz
     timeout: 30
   when: stream_app.stat.exists == False
@@ -20,10 +20,9 @@
     body: "name=/tmp/splunk-app-for-stream_730.tgz&update=true&filename=true"
     headers:
       Content-Type: "application/x-www-form-urlencoded"
-    status_code: [ 200, 201 ]
+    status_code: [200, 201]
     timeout: 90
   when: stream_app.stat.exists == False
-
 
 - name: Check if Splunk TA wire data exists
   stat:
@@ -32,7 +31,7 @@
 
 - name: download Stream app from S3 bucket
   get_url:
-    url: '{{ s3_bucket_url }}/{{ splunk_ta_wire_data }}'
+    url: "{{ s3_bucket_url }}/{{ splunk_ta_wire_data }}"
     dest: /tmp/splunk-add-on-for-stream-wire-data_730.tgz
     timeout: 30
   when: stream_app_2.stat.exists == False
@@ -47,10 +46,9 @@
     body: "name=/tmp/splunk-add-on-for-stream-wire-data_730.tgz&update=true&filename=true"
     headers:
       Content-Type: "application/x-www-form-urlencoded"
-    status_code: [ 200, 201 ]
+    status_code: [200, 201]
     timeout: 90
   when: stream_app_2.stat.exists == False
-
 
 - name: Check if Splunk Stream Forwarder exists
   stat:
@@ -59,7 +57,7 @@
 
 - name: download Stream app from S3 bucket
   get_url:
-    url: '{{ s3_bucket_url }}/{{ splunk_ta_stream }}'
+    url: "{{ s3_bucket_url }}/{{ splunk_ta_stream }}"
     dest: /tmp/splunk-add-on-for-stream-forwarders_730.tgz
     timeout: 30
   when: stream_app_3.stat.exists == False
@@ -74,13 +72,13 @@
     body: "name=/tmp/splunk-add-on-for-stream-forwarders_730.tgz&update=true&filename=true"
     headers:
       Content-Type: "application/x-www-form-urlencoded"
-    status_code: [ 200, 201 ]
+    status_code: [200, 201]
     timeout: 90
   when: stream_app_3.stat.exists == False
 
 - name: restart splunk
   service: name=splunk state=restarted
-  become: yes
+  become: True
 
 - name: Copy new inputs.conf for stream configuration
   template:
@@ -97,14 +95,14 @@
     path: /opt/splunk/etc/apps/Splunk_TA_stream/set_permissions.sh
     owner: root
     group: root
-    mode: '0700'
+    mode: "0700"
 
 # # # Script to set NIC to promiscuous mode: https://docs.splunk.com/Documentation/StreamApp/7.2.0/DeployStreamApp/InstallSplunkAppforStream#Set_Splunk_TA_stream_permissions
 - name: Change the working directory to cd /opt/splunk/etc/apps/Splunk_TA_stream/ before setting write permissions.
   shell: ./set_permissions.sh
   args:
     chdir: /opt/splunk/etc/apps/Splunk_TA_stream/
-  become: yes
+  become: True
   become_user: root
   become_method: sudo
 
