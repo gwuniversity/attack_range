@@ -19,7 +19,7 @@ data "aws_ami" "windows_ami" {
 
 resource "aws_instance" "windows_server" {
   count                       = length(var.windows_servers)
-  ami                         = data.aws_ami.windows_ami[count.index].id
+  ami                         = var.aws.windows_ami != "" ? var.aws.windows_ami : data.aws_ami.windows_ami[count.index].id
   instance_type               = (var.zeek_server.zeek_server == "1" || var.snort_server.snort_server == "1") ? "m5.2xlarge" : "t3.xlarge"
   key_name                    = var.general.key_name
   subnet_id                   = var.ec2_subnet_id
@@ -27,9 +27,11 @@ resource "aws_instance" "windows_server" {
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   iam_instance_profile        = var.instance_profile_name
   associate_public_ip_address = true
+
   tags = {
     Name = "ar-win-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
   }
+
   user_data = <<EOF
 <powershell>
 $admin = [adsi]("WinNT://./Administrator, user")

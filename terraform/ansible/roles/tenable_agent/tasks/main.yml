@@ -3,4 +3,4 @@
   when: ansible_os_family == "Debian" and general.nessus_agent == "1"
 
 - include_tasks: windows.yml
-  when: ansible_os_family == "Windows" and general.nessus_agent == "1"
+  when: ansible_os_family == "Windows" and windows_servers.install_nessus== "1"
