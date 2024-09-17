@@ -51,15 +51,19 @@ module "windows-server" {
 module "linux-server" {
   source                 = "./modules/linux-server"
   vpc_security_group_ids = module.networkModule.sg_vpc_id
-  ec2_subnet_id          = module.networkModule.ec2_subnet_id
-  general                = var.general
-  aws                    = var.aws
-  zeek_server            = var.zeek_server
-  snort_server           = var.snort_server
-  linux_servers          = var.linux_servers
-  simulation             = var.simulation
-  splunk_server          = var.splunk_server
-  instance_profile_name  = aws_iam_instance_profile.this.name
+  ec2_subnet_id = try(
+    var.linux_servers.subnet_id,
+    var.linux_servers.use_public_ip == "1" ? var.aws.private_subnet_id : null,
+    module.networkModule.ec2_subnet_id
+  )
+  general               = var.general
+  aws                   = var.aws
+  zeek_server           = var.zeek_server
+  snort_server          = var.snort_server
+  linux_servers         = var.linux_servers
+  simulation            = var.simulation
+  splunk_server         = var.splunk_server
+  instance_profile_name = aws_iam_instance_profile.this.name
 }
 
 module "kali-server" {
@@ -140,6 +144,16 @@ module "edge_processor" {
   instance_profile_name          = aws_iam_instance_profile.this.name
 }
 
+module "network_load_balancer" {
+  source                     = "./modules/nlb"
+  ec2_subnet_id              = module.networkModule.ec2_subnet_id
+  general                    = var.general
+  aws                        = var.aws
+  edge_processor             = var.edge_processor
+  nlb_security_group_id      = module.nlb_security_group.id
+  edge-processor_instance_id = module.edge_processor.instance_id
+}
+
 module "route53" {
   source   = "./modules/route53"
   dns_zone = var.general.dns_zone
@@ -155,16 +169,6 @@ module "apache_httpd" {
   elb_security_group_id          = module.elb_security_group.id
   bastion_host_security_group_id = module.bastion_host.security_group_id
   instance_profile_name          = aws_iam_instance_profile.this.name
-}
-
-module "network_load_balancer" {
-  source                     = "./modules/nlb"
-  ec2_subnet_id              = module.networkModule.ec2_subnet_id
-  general                    = var.general
-  aws                        = var.aws
-  edge_processor             = var.edge_processor
-  nlb_security_group_id      = module.nlb_security_group.id
-  edge-processor_instance_id = module.edge_processor.instance_id
 }
 
 module "application_load_balancer" {

@@ -26,7 +26,7 @@ resource "aws_instance" "windows_server" {
   private_ip                  = "${var.aws.network_prefix}.${var.aws.first_dynamic_ip + count.index}"
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   iam_instance_profile        = var.instance_profile_name
-  associate_public_ip_address = true
+  associate_public_ip_address = var.windows_servers[count.index].use_public_ip
 
   tags = {
     Name = "ar-win-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"

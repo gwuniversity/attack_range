@@ -25,7 +25,7 @@ resource "aws_instance" "linux_server" {
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   iam_instance_profile        = var.instance_profile_name
   private_ip                  = "${var.aws.network_prefix}.${var.aws.first_dynamic_ip + 3 + count.index}"
-  associate_public_ip_address = true
+  associate_public_ip_address = var.linux_servers[count.index].use_public_ip
 
   root_block_device {
     volume_type           = "gp3"

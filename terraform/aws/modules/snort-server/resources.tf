@@ -24,7 +24,7 @@ resource "aws_instance" "snort_sensor" {
   subnet_id                   = var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.snort_server.snort_server_ip
-  associate_public_ip_address = true
+  associate_public_ip_address = var.snort_server.use_public_ip
 
   root_block_device {
     volume_type           = "gp3"

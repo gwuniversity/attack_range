@@ -24,7 +24,7 @@ resource "aws_instance" "zeek_sensor" {
   subnet_id                   = var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.zeek_server.zeek_server_ip
-  associate_public_ip_address = true
+  associate_public_ip_address = var.zeek_server.use_public_ip
 
   tags = {
     Name = "ar-zeek-${var.general.key_name}-${var.general.attack_range_name}"

@@ -82,7 +82,7 @@ resource "aws_instance" "splunk-server" {
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.splunk_server.splunk_server_ip
   iam_instance_profile        = ((var.aws.cloudtrail == "1") || (var.general.carbon_black_cloud == "1")) && (var.splunk_server.byo_splunk == "0") ? aws_iam_instance_profile.splunk_profile[0].name : var.instance_profile_name
-  associate_public_ip_address = true
+  associate_public_ip_address = var.splunk_server.use_public_ip
 
   root_block_device {
     volume_type           = "gp3"

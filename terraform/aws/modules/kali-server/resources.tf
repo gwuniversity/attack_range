@@ -23,7 +23,7 @@ resource "aws_instance" "kali_machine" {
   subnet_id                   = var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.kali_server.kali_server_ip
-  associate_public_ip_address = true
+  associate_public_ip_address = var.kali_server.use_public_ip
 
   tags = {
     Name = "ar-kali-${var.general.key_name}-${var.general.attack_range_name}"
