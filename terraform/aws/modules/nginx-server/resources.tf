@@ -24,7 +24,7 @@ resource "aws_instance" "nginx_server" {
   subnet_id                   = var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.nginx_server.nginx_server_ip
-  associate_public_ip_address = var.nginx_server.use_public_ip
+  associate_public_ip_address = var.aws.use_public_ips
 
   root_block_device {
     volume_type           = "gp3"

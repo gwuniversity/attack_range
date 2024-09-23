@@ -53,7 +53,7 @@ module "linux-server" {
   vpc_security_group_ids = module.networkModule.sg_vpc_id
   ec2_subnet_id = try(
     var.linux_servers.subnet_id,
-    var.linux_servers.use_public_ip == "1" ? var.aws.private_subnet_id : null,
+    var.aws.use_public_ips == "1" ? var.aws.private_subnet_id : null,
     module.networkModule.ec2_subnet_id
   )
   general               = var.general
@@ -125,23 +125,15 @@ module "elb_security_group" {
   aws     = var.aws
 }
 
-module "bastion_host" {
-  source                = "./modules/bastion_host"
-  ec2_subnet_id         = module.networkModule.ec2_subnet_id
-  general               = var.general
-  aws                   = var.aws
-  instance_profile_name = aws_iam_instance_profile.this.name
-}
-
 module "edge_processor" {
-  source                         = "./modules/edge_processor"
-  general                        = var.general
-  aws                            = var.aws
-  edge_processor                 = var.edge_processor
-  splunk_server                  = var.splunk_server
-  nlb_security_group_id          = module.nlb_security_group.id
-  bastion_host_security_group_id = module.bastion_host.security_group_id
-  instance_profile_name          = aws_iam_instance_profile.this.name
+  vpc_security_group_ids = module.networkModule.sg_vpc_id
+  source                 = "./modules/edge_processor"
+  general                = var.general
+  aws                    = var.aws
+  edge_processor         = var.edge_processor
+  splunk_server          = var.splunk_server
+  nlb_security_group_id  = module.nlb_security_group.id
+  instance_profile_name  = aws_iam_instance_profile.this.name
 }
 
 module "network_load_balancer" {
@@ -161,14 +153,14 @@ module "route53" {
 }
 
 module "apache_httpd" {
-  source                         = "./modules/apache/httpd"
-  general                        = var.general
-  aws                            = var.aws
-  httpd_server                   = var.httpd_server
-  splunk_server                  = var.splunk_server
-  elb_security_group_id          = module.elb_security_group.id
-  bastion_host_security_group_id = module.bastion_host.security_group_id
-  instance_profile_name          = aws_iam_instance_profile.this.name
+  vpc_security_group_ids = module.networkModule.sg_vpc_id
+  source                 = "./modules/apache/httpd"
+  general                = var.general
+  aws                    = var.aws
+  httpd_server           = var.httpd_server
+  splunk_server          = var.splunk_server
+  elb_security_group_id  = module.elb_security_group.id
+  instance_profile_name  = aws_iam_instance_profile.this.name
 }
 
 module "application_load_balancer" {

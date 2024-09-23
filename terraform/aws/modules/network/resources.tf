@@ -3,7 +3,14 @@ data "aws_availability_zones" "available" {}
 
 locals {
   cluster_name = "cluster_${var.general.key_name}_${var.general.attack_range_name}"
+  subnet_id    = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.aws.private_subnet_id
+
 }
+
+data "aws_subnet" "selected" {
+  id = local.subnet_id
+}
+
 
 # Create VPC if var.aws.create_vpc is set to "1"
 module "vpc" {
@@ -19,19 +26,19 @@ module "vpc" {
 
 # Use the public subnet from the created VPC or the existing public subnet
 locals {
-  public_subnet = var.aws.create_vpc == "1" ? module.vpc[0].public_subnets : var.aws.network_cidr
-  vpc_id        = var.aws.create_vpc == "1" ? module.vpc[0].vpc_id : var.aws.vpc_id
+  ar_subnet = var.aws.create_vpc == "1" ? module.vpc[0].public_subnets : data.aws_subnet.selected.cidr_block
+  vpc_id    = var.aws.create_vpc == "1" ? module.vpc[0].vpc_id : var.aws.vpc_id
 }
 
 resource "aws_security_group" "default" {
-  name   = "sg_public_subnets_${var.general.key_name}_${var.general.attack_range_name}"
+  name   = "sg_subnets_${var.general.key_name}_${var.general.attack_range_name}"
   vpc_id = local.vpc_id
 
   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [local.public_subnet]
+    cidr_blocks = [local.ar_subnet]
   }
 
   ingress {
@@ -45,7 +52,7 @@ resource "aws_security_group" "default" {
     from_port   = -1
     to_port     = -1
     protocol    = "icmp"
-    cidr_blocks = [local.public_subnet]
+    cidr_blocks = [local.ar_subnet]
   }
 
   ingress {

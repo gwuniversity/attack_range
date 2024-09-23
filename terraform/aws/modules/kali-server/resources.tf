@@ -6,7 +6,7 @@ data "aws_ami" "latest-kali-linux" {
 
   filter {
     name   = "name"
-    values = ["kali-last-snapshot-amd64-2023*"]
+    values = ["kali-last-snapshot-amd64-2024*"]
   }
 
   filter {
@@ -20,10 +20,10 @@ resource "aws_instance" "kali_machine" {
   ami                         = data.aws_ami.latest-kali-linux[count.index].id
   instance_type               = "t3.large"
   key_name                    = var.general.key_name
-  subnet_id                   = var.ec2_subnet_id
+  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.kali_server.kali_server_ip
-  associate_public_ip_address = var.kali_server.use_public_ip
+  associate_public_ip_address = var.aws.use_public_ips
 
   tags = {
     Name = "ar-kali-${var.general.key_name}-${var.general.attack_range_name}"
@@ -41,7 +41,7 @@ resource "aws_instance" "kali_machine" {
     connection {
       type        = "ssh"
       user        = "kali"
-      host        = aws_instance.kali_machine[count.index].public_ip
+      host        = var.aws.use_public_ips == "1" ? aws_instance.kali_machine[0].public_ip : aws_instance.kali_machine[0].private_ip
       private_key = file(var.aws.private_key_path)
     }
   }

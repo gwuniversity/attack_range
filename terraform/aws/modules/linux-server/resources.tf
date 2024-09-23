@@ -21,11 +21,11 @@ resource "aws_instance" "linux_server" {
   ami                         = data.aws_ami.linux_server[count.index].id
   instance_type               = (var.zeek_server.zeek_server == "1" || var.snort_server.snort_server == "1") ? "m5.2xlarge" : "t3.xlarge"
   key_name                    = var.general.key_name
-  subnet_id                   = var.ec2_subnet_id
+  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   iam_instance_profile        = var.instance_profile_name
   private_ip                  = "${var.aws.network_prefix}.${var.aws.first_dynamic_ip + 3 + count.index}"
-  associate_public_ip_address = var.linux_servers[count.index].use_public_ip
+  associate_public_ip_address = var.aws.use_public_ips
 
   root_block_device {
     volume_type           = "gp3"
@@ -43,7 +43,7 @@ resource "aws_instance" "linux_server" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      host        = self.public_ip
+      host        = var.aws.use_public_ips == "1" ? self.public_ip : self.private_ip
       private_key = file(var.aws.private_key_path)
     }
   }
@@ -66,9 +66,8 @@ resource "aws_instance" "linux_server" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${self.public_ip},' linux_server.yml -e @vars/linux_vars_${count.index}.json"
+    command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${var.aws.use_public_ips == "1" ? self.public_ip : self.private_ip},' linux_server.yml -e @vars/linux_vars_${count.index}.json"
   }
-
 }
 
 resource "aws_eip" "linux_server_ip" {

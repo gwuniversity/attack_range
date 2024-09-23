@@ -31,7 +31,7 @@ resource "aws_instance" "phantom-server" {
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.phantom_server.phantom_server_ip
   iam_instance_profile        = var.phantom_server.instance_profile_name
-  associate_public_ip_address = var.phantom_server.use_public_ip
+  associate_public_ip_address = var.aws.use_public_ips
   root_block_device {
     volume_type           = "gp3"
     volume_size           = "30"
