@@ -78,11 +78,11 @@ resource "aws_instance" "splunk-server" {
   ami                         = data.aws_ami.splunk_server[0].id
   instance_type               = "t3.2xlarge"
   key_name                    = var.general.key_name
-  subnet_id                   = var.ec2_subnet_id
+  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.splunk_server.splunk_server_ip
   iam_instance_profile        = ((var.aws.cloudtrail == "1") || (var.general.carbon_black_cloud == "1")) && (var.splunk_server.byo_splunk == "0") ? aws_iam_instance_profile.splunk_profile[0].name : var.instance_profile_name
-  associate_public_ip_address = var.splunk_server.use_public_ip
+  associate_public_ip_address = var.aws.use_public_ips
 
   root_block_device {
     volume_type           = "gp3"
@@ -100,7 +100,7 @@ resource "aws_instance" "splunk-server" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      host        = aws_instance.splunk-server[0].public_ip
+      host        = var.aws.use_public_ips == "1" ? aws_instance.splunk-server[0].public_ip : aws_instance.splunk-server[0].private_ip
       private_key = file(var.aws.private_key_path)
     }
   }
@@ -129,7 +129,7 @@ resource "aws_instance" "splunk-server" {
   provisioner "local-exec" {
     working_dir = "../ansible"
     command     = <<-EOT
-      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${aws_instance.splunk-server[0].public_ip},' splunk_server.yml -e "@vars/splunk_vars.json"
+      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${var.aws.use_public_ips == "1" ? aws_instance.splunk-server[0].public_ip : aws_instance.splunk-server[0].private_ip},' splunk_server.yml -e "@vars/splunk_vars.json"
     EOT
   }
 

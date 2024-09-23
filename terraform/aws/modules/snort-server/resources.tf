@@ -21,10 +21,10 @@ resource "aws_instance" "snort_sensor" {
   ami                         = data.aws_ami.snort_server[0].id
   instance_type               = "m5.2xlarge"
   key_name                    = var.general.key_name
-  subnet_id                   = var.ec2_subnet_id
+  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.snort_server.snort_server_ip
-  associate_public_ip_address = var.snort_server.use_public_ip
+  associate_public_ip_address = var.aws.use_public_ips
 
   root_block_device {
     volume_type           = "gp3"
@@ -42,7 +42,7 @@ resource "aws_instance" "snort_sensor" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      host        = self.public_ip
+      host        = var.aws.use_public_ips == "1" ? aws_instance.snort_sensor[0].public_ip : aws_instance.snort_sensor[0].private_ip
       private_key = file(var.aws.private_key_path)
     }
   }
@@ -63,7 +63,7 @@ resource "aws_instance" "snort_sensor" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${self.public_ip},' snort_server.yml -e @vars/snort_vars.json"
+    command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${var.aws.use_public_ips == "1" ? aws_instance.snort_sensor[0].public_ip : aws_instance.snort_sensor[0].private_ip},' snort_server.yml -e @vars/snort_vars.json"
   }
 }
 

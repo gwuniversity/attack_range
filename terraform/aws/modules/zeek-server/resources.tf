@@ -21,10 +21,10 @@ resource "aws_instance" "zeek_sensor" {
   ami                         = data.aws_ami.zeek_server[0].id
   instance_type               = "m5.2xlarge"
   key_name                    = var.general.key_name
-  subnet_id                   = var.ec2_subnet_id
+  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.zeek_server.zeek_server_ip
-  associate_public_ip_address = var.zeek_server.use_public_ip
+  associate_public_ip_address = var.aws.use_public_ips
 
   tags = {
     Name = "ar-zeek-${var.general.key_name}-${var.general.attack_range_name}"
@@ -36,7 +36,7 @@ resource "aws_instance" "zeek_sensor" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      host        = self.public_ip
+      host        = var.aws.use_public_ips == "1" ? aws_instance.zeek_sensor[0].public_ip : aws_instance.zeek_sensor[0].private_ip
       private_key = file(var.aws.private_key_path)
     }
   }
@@ -57,7 +57,7 @@ resource "aws_instance" "zeek_sensor" {
   provisioner "local-exec" {
     working_dir = "../ansible"
     command     = <<-EOT
-      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${aws_instance.zeek_sensor[0].public_ip},' zeek_server.yml -e "@vars/zeek_vars.json"
+      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${var.aws.use_public_ips == "1" ? aws_instance.zeek_sensor[0].public_ip : aws_instance.zeek_sensor[0].private_ip},' zeek_server.yml -e "@vars/zeek_vars.json"
     EOT
   }
 }

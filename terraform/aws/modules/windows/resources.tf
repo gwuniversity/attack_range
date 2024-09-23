@@ -22,11 +22,11 @@ resource "aws_instance" "windows_server" {
   ami                         = var.aws.windows_ami != "" ? var.aws.windows_ami : data.aws_ami.windows_ami[count.index].id
   instance_type               = (var.zeek_server.zeek_server == "1" || var.snort_server.snort_server == "1") ? "m5.2xlarge" : "t3.xlarge"
   key_name                    = var.general.key_name
-  subnet_id                   = var.ec2_subnet_id
+  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.ec2_subnet_id
   private_ip                  = "${var.aws.network_prefix}.${var.aws.first_dynamic_ip + count.index}"
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   iam_instance_profile        = var.instance_profile_name
-  associate_public_ip_address = var.windows_servers[count.index].use_public_ip
+  associate_public_ip_address = var.aws.use_public_ips
 
   tags = {
     Name = "ar-win-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
@@ -71,7 +71,7 @@ EOF
       user = "Administrator"
       #password = "${rsadecrypt(aws_instance.windows_server[count.index].password_data, file(var.aws.private_key_path))}"
       password = var.general.attack_range_password
-      host     = self.public_ip
+      host     = var.aws.use_public_ips == "1" ? self.public_ip : self.private_ip
       port     = 5985
       insecure = true
       https    = false
@@ -99,7 +99,7 @@ EOF
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command     = "ansible-playbook -i '${self.public_ip},' windows.yml -e @vars/windows_vars_${count.index}.json"
+    command     = "ansible-playbook -i '${var.aws.use_public_ips == "1" ? self.public_ip : self.private_ip},' windows.yml -e @vars/windows_vars_${count.index}.json"
   }
 
 }
