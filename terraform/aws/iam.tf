@@ -34,29 +34,3 @@ resource "aws_iam_instance_profile" "this" {
   path = "/"
   role = aws_iam_role.this.name
 }
-
-data "aws_iam_policy_document" "this" {
-  statement {
-    actions = [
-      "sqs:GetQueueAttributes",
-      "sqs:ListQueues",
-      "sqs:ReceiveMessage",
-      "sqs:GetQueueUrl",
-      "sqs:DeleteMessage",
-      "s3:Get*",
-      "s3:List*",
-      "s3:Delete*",
-      "kms:Decrypt",
-    ]
-
-    resources = [
-      "*"
-    ]
-  }
-}
-
-resource "aws_iam_role_policy" "splunk_logging_policy" {
-  name   = "splunk_logging_policy_${var.general.key_name}_${var.general.attack_range_name}"
-  role   = aws_iam_role.this.id
-  policy = data.aws_iam_policy_document.this.json
-}
