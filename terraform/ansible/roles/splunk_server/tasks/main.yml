@@ -13,15 +13,9 @@
   set_fact:
     splunk_apps_list: "{{ splunk_server.splunk_apps.split(',') }}"
 
-- name: Include install_app_from_url.yml if s3_bucket_url starts with https
-  include_tasks: install_app_from_url.yml
+- include_tasks: install_app_from_s3.yml
   with_items: "{{ splunk_apps_list }}"
   when: splunk_server.s3_bucket_url is defined and splunk_server.s3_bucket_url.startswith('https')
-
-- name: Include install_app_from_s3.yml if s3_bucket_url doesn't start with https
-  include_tasks: install_app_from_s3.yml
-  with_items: "{{ splunk_apps_list }}"
-  when: splunk_server.s3_bucket_url is not defined or not splunk_server.s3_bucket_url.startswith('https')
 
 - include_tasks: configure_attack_range_dashboard.yml
 - include_tasks: configure_escu.yml

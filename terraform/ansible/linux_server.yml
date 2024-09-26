@@ -2,17 +2,15 @@
   gather_facts: True
   become: True
   roles:
-    - set_hostname_linux
-    - linux_common
-    - linux_universal_forwarder
-    - linux_osquery
-    - linux_sysmon
-    - linux_install_auditd
-    - linux_install_art
-    - linux_server_post
-    - update_sysmon_config_linux
-    - splunk_byo_linux
-    - contentctl
-    - red_team_tools
-    - tenable_agent
-    - cortex_xdr
+      - set_hostname_linux
+      - linux_common
+      - linux_universal_forwarder
+      - linux_osquery
+      - linux_sysmon
+      - linux_install_auditd
+      - linux_install_art
+      - linux_server_post
+      - update_sysmon_config_linux
+      - splunk_byo_linux
+      - contentctl
+      - crowdstrike_falcon_agent_linux
