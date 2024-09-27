@@ -153,9 +153,9 @@ splunk_server:
     - app-for-circleci_011.tgz
     - palo-alto-networks-add-on-for-splunk_813.tgz
     - punchcard-custom-visualization_150.tgz
-    - python-for-scientific-computing-for-linux-64-bit_421.tgz
+    - python-for-scientific-computing-for-linux-64-bit_420.tgz
     - snort-alert-for-splunk_111.tgz
-    - splunk-add-on-for-amazon-web-services-aws_770.tgz
+    - splunk-add-on-for-amazon-web-services-aws_760.tgz
     - splunk-add-on-for-crowdstrike-fdr_200.tgz
     - splunk-add-on-for-github_300.tgz
     - splunk-add-on-for-google-workspace_281.tgz
