@@ -18,8 +18,8 @@ module "splunk-server" {
   kali_server            = var.kali_server
   zeek_server            = var.zeek_server
   snort_server           = var.snort_server
-  role_arn               = aws_iam_role.this.arn
-  instance_profile_name  = aws_iam_instance_profile.this.name
+  role_arn               = aws_iam_role.s3_access.arn
+  instance_profile_name  = aws_iam_instance_profile.s3_access.name
 }
 
 module "phantom-server" {
@@ -30,7 +30,7 @@ module "phantom-server" {
   general                = var.general
   aws                    = var.aws
   splunk_server          = var.splunk_server
-  instance_profile_name  = aws_iam_instance_profile.this.name
+  instance_profile_name  = aws_iam_instance_profile.s3_access.name
 }
 
 module "windows-server" {
@@ -44,7 +44,7 @@ module "windows-server" {
   zeek_server            = var.zeek_server
   snort_server           = var.snort_server
   splunk_server          = var.splunk_server
-  instance_profile_name  = aws_iam_instance_profile.this.name
+  instance_profile_name  = aws_iam_instance_profile.s3_access.name
 
 }
 
@@ -63,7 +63,7 @@ module "linux-server" {
   linux_servers         = var.linux_servers
   simulation            = var.simulation
   splunk_server         = var.splunk_server
-  instance_profile_name = aws_iam_instance_profile.this.name
+  instance_profile_name = aws_iam_instance_profile.s3_access.name
 }
 
 module "kali-server" {
@@ -133,7 +133,7 @@ module "edge_processor" {
   edge_processor         = var.edge_processor
   splunk_server          = var.splunk_server
   nlb_security_group_id  = module.nlb_security_group.id
-  instance_profile_name  = aws_iam_instance_profile.this.name
+  instance_profile_name  = aws_iam_instance_profile.s3_access.name
 }
 
 module "network_load_balancer" {
@@ -160,7 +160,7 @@ module "apache_httpd" {
   httpd_server           = var.httpd_server
   splunk_server          = var.splunk_server
   elb_security_group_id  = module.elb_security_group.id
-  instance_profile_name  = aws_iam_instance_profile.this.name
+  instance_profile_name  = aws_iam_instance_profile.s3_access.name
 }
 
 module "application_load_balancer" {
@@ -188,16 +188,12 @@ module "waf" {
   ]
 }
 
-resource "random_pet" "this" {
-  length = 2
-}
-
 resource "aws_s3_bucket" "s3" {
-  bucket        = "${var.general.name_prefix}-${var.general.key_name}-${var.general.attack_range_name}-${random_pet.this.id}"
+  bucket        = "${var.general.name_prefix}-${var.general.key_name}-${var.general.attack_range_name}-waf-backup-${var.aws.region}"
   force_destroy = true
 }
 
-resource "aws_kms_key" "this" {
+resource "aws_kms_key" "backup_key" {
   description             = "${var.general.name_prefix}-${var.general.attack_range_name}-kms-key"
   deletion_window_in_days = 7
 }
@@ -209,5 +205,5 @@ module "firehose" {
   destination           = "splunk"
   input_source          = "waf"
   s3_backup_bucket_arn  = aws_s3_bucket.s3.arn
-  s3_backup_kms_key_arn = aws_kms_key.this.arn
+  s3_backup_kms_key_arn = aws_kms_key.backup_key.arn
 }

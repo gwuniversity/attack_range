@@ -121,6 +121,7 @@ resource "aws_instance" "splunk-server" {
         "windows_servers": ${jsonencode(var.windows_servers)},
         "linux_servers": ${jsonencode(var.linux_servers)},
         "snort_server": ${jsonencode(var.snort_server)},
+        "role_arn": ${jsonencode(var.role_arn)}
       }
       EOF
     EOT
