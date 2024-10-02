@@ -24,7 +24,7 @@ resource "aws_instance" "linux_server" {
   subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   iam_instance_profile        = var.instance_profile_name
-  private_ip                  = "${var.aws.network_prefix}.${var.aws.first_dynamic_ip + 3 + count.index}"
+  private_ip                  = "${var.aws.network_prefix}.${var.aws.first_dynamic_ip + 5 + count.index}"
   associate_public_ip_address = var.aws.use_public_ips
 
   root_block_device {

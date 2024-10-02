@@ -1,5 +1,5 @@
 <user-mapping>
-    <authorize 
+    <authorize
             username="Admin"
             password="{{general.attack_range_password|hash('md5')}}"
             encoding="md5">
@@ -14,7 +14,7 @@
             {% elif general.cloud_provider == 'azure' %}
             <param name="private-key">{{ lookup('file', azure.private_key_path) }}</param>
             {% endif %}
-        </connection>        
+        </connection>
 
         {% if phantom_server.phantom_server == '1' %}
         <connection name="ar-phantom-{{ general.key_name }}-{{ general.attack_range_name }}">
@@ -27,9 +27,9 @@
             {% elif general.cloud_provider == 'azure' %}
             <param name="private-key">{{ lookup('file', azure.private_key_path) }}</param>
             {% endif %}
-        </connection>    
+        </connection>
         {% endif %}
-        
+
         {% if windows_servers is string %}
             {% set windows_servers_list = windows_servers|from_json %}
         {% else %}
@@ -38,7 +38,7 @@
         {% for server in windows_servers_list %}
         <connection name="ar-win-{{ general.key_name }}-{{ general.attack_range_name }}-{{ loop.index-1 }}">
             <protocol>rdp</protocol>
-            <param name="hostname">10.0.1.{{loop.index-1+14}}</param>
+            <param name="hostname">10.0.1.{{loop.index-1+20}}</param>
             <param name="port">3389</param>
              {% if general.cloud_provider == 'azure' %}
             <param name="username">AzureAdmin</param>
@@ -60,7 +60,7 @@
         {% for server in linux_servers_list %}
         <connection name="ar-linux-{{ general.key_name }}-{{ general.attack_range_name }}-{{ loop.index-1 }}">
             <protocol>ssh</protocol>
-            <param name="hostname">10.0.1.{{loop.index-1+21}}</param>
+            <param name="hostname">10.0.1.{{loop.index-1+25}}</param>
             <param name="port">22</param>
             <param name="username">ubuntu</param>
             {% if general.cloud_provider == 'aws' %}
@@ -82,7 +82,7 @@
             {% elif general.cloud_provider == 'azure' %}
             <param name="private-key">{{ lookup('file', azure.private_key_path) }}</param>
             {% endif %}
-        </connection>    
+        </connection>
         {% endif %}
 
         {% if zeek_server.zeek_server == '1' %}
@@ -96,7 +96,7 @@
             {% elif general.cloud_provider == 'azure' %}
             <param name="private-key">{{ lookup('file', azure.private_key_path) }}</param>
             {% endif %}
-        </connection>    
+        </connection>
         {% endif %}
 
         {% if snort_server.snort_server == '1' %}
@@ -110,7 +110,7 @@
             {% elif general.cloud_provider == 'azure' %}
             <param name="private-key">{{ lookup('file', azure.private_key_path) }}</param>
             {% endif %}
-        </connection>    
+        </connection>
         {% endif %}
 
     </authorize>

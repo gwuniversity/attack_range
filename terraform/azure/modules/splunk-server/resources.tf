@@ -17,19 +17,19 @@ resource "azurerm_network_interface" "splunk-nic" {
     name                          = "ar-splunk-nic-conf-${var.general.key_name}-${var.general.attack_range_name}"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Static"
-    private_ip_address            = "10.0.1.12"
+    private_ip_address            = "10.0.1.10"
     public_ip_address_id          = azurerm_public_ip.splunk-publicip[0].id
   }
 }
 
 resource "azurerm_virtual_machine" "splunk" {
-  count = var.splunk_server.byo_splunk == "0" ? 1 : 0
-  name = "ar-splunk-${var.general.key_name}-${var.general.attack_range_name}"
-  location = var.azure.location
-  resource_group_name  = var.rg_name
+  count                 = var.splunk_server.byo_splunk == "0" ? 1 : 0
+  name                  = "ar-splunk-${var.general.key_name}-${var.general.attack_range_name}"
+  location              = var.azure.location
+  resource_group_name   = var.rg_name
   network_interface_ids = [azurerm_network_interface.splunk-nic[0].id]
   vm_size               = "Standard_D4_v4"
-#  depends_on             = [var.phantom_server_instance]
+  #  depends_on             = [var.phantom_server_instance]
   delete_os_disk_on_termination = true
 
   storage_os_disk {
@@ -73,7 +73,7 @@ resource "azurerm_virtual_machine" "splunk" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command = <<-EOT
+    command     = <<-EOT
       cat <<EOF > vars/splunk_vars.json
       {
         "ansible_python_interpreter": "/usr/bin/python3",
@@ -94,7 +94,7 @@ resource "azurerm_virtual_machine" "splunk" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command = <<-EOT
+    command     = <<-EOT
       ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.azure.private_key_path}' -i '${azurerm_public_ip.splunk-publicip[0].ip_address},' splunk_server.yml -e "@vars/splunk_vars.json"
     EOT
   }
