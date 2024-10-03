@@ -19,7 +19,7 @@
         {% if phantom_server.phantom_server == '1' %}
         <connection name="ar-phantom-{{ general.key_name }}-{{ general.attack_range_name }}">
             <protocol>ssh</protocol>
-            <param name="hostname">10.0.1.13</param>
+            <param name="hostname">10.64.16.13</param>
             <param name="port">22</param>
             <param name="username">centos</param>
             {% if general.cloud_provider == 'aws' %}
@@ -38,7 +38,7 @@
         {% for server in windows_servers_list %}
         <connection name="ar-win-{{ general.key_name }}-{{ general.attack_range_name }}-{{ loop.index-1 }}">
             <protocol>rdp</protocol>
-            <param name="hostname">10.0.1.{{loop.index-1+20}}</param>
+            <param name="hostname">10.64.16.{{loop.index-1+20}}</param>
             <param name="port">3389</param>
              {% if general.cloud_provider == 'azure' %}
             <param name="username">AzureAdmin</param>
@@ -60,7 +60,7 @@
         {% for server in linux_servers_list %}
         <connection name="ar-linux-{{ general.key_name }}-{{ general.attack_range_name }}-{{ loop.index-1 }}">
             <protocol>ssh</protocol>
-            <param name="hostname">10.0.1.{{loop.index-1+25}}</param>
+            <param name="hostname">10.64.16.{{loop.index-1+25}}</param>
             <param name="port">22</param>
             <param name="username">ubuntu</param>
             {% if general.cloud_provider == 'aws' %}
@@ -74,7 +74,7 @@
         {% if kali_server.kali_server == '1' %}
         <connection name="ar-kali-{{ general.key_name }}-{{ general.attack_range_name }}">
             <protocol>ssh</protocol>
-            <param name="hostname">10.0.1.30</param>
+            <param name="hostname">10.64.16.14</param>
             <param name="port">22</param>
             <param name="username">kali</param>
             {% if general.cloud_provider == 'aws' %}
@@ -88,7 +88,7 @@
         {% if zeek_server.zeek_server == '1' %}
         <connection name="ar-zeek-{{ general.key_name }}-{{ general.attack_range_name }}">
             <protocol>ssh</protocol>
-            <param name="hostname">10.0.1.50</param>
+            <param name="hostname">10.64.16.13</param>
             <param name="port">22</param>
             <param name="username">ubuntu</param>
             {% if general.cloud_provider == 'aws' %}
@@ -102,7 +102,7 @@
         {% if snort_server.snort_server == '1' %}
         <connection name="ar-snort-{{ general.key_name }}-{{ general.attack_range_name }}">
             <protocol>ssh</protocol>
-            <param name="hostname">10.0.1.60</param>
+            <param name="hostname">10.64.16.12</param>
             <param name="port">22</param>
             <param name="username">ubuntu</param>
             {% if general.cloud_provider == 'aws' %}

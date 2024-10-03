@@ -19,9 +19,8 @@ general:
   # ip_whitelist = 0.0.0.0/0,35.153.82.195/32
 
   crowdstrike_falcon: "0"
-  # Enable/Disable CrowdStrike Falcon by setting this to 1 or 0.
+  # Enable/Disable CrowdStrike Falcon log forwarding to Splunk by setting this to 1 or 0.
 
-  crowdstrike_agent_name: "WindowsSensor.exe"
   crowdstrike_customer_ID: ""
   crowdstrike_logs_region: ""
   crowdstrike_logs_access_key_id: ""
@@ -31,7 +30,7 @@ general:
   # See the chapter CrowdStrike Falcon in the docs page Attack Range Features.
 
   carbon_black_cloud: "0"
-  # Enable/Disable VMWare Carbon Black Cloud by setting this to 1 or 0.
+  # Enable/Disable VMWare Carbon Black Cloud log forwarding to Splunkby setting this to 1 or 0.
 
   carbon_black_cloud_agent_name: "installer_vista_win7_win8-64-3.8.0.627.msi"
   carbon_black_cloud_company_code: ""

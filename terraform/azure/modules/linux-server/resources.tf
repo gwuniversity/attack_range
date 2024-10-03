@@ -1,5 +1,5 @@
 resource "azurerm_public_ip" "linux-publicip" {
-  count = length(var.linux_servers)
+  count               = length(var.linux_servers)
   name                = "ar-linux-ip-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
   location            = var.azure.location
   resource_group_name = var.rg_name
@@ -7,7 +7,7 @@ resource "azurerm_public_ip" "linux-publicip" {
 }
 
 resource "azurerm_network_interface" "linux-nic" {
-  count = length(var.linux_servers)
+  count               = length(var.linux_servers)
   name                = "ar-linux-nic-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
   location            = var.azure.location
   resource_group_name = var.rg_name
@@ -16,18 +16,18 @@ resource "azurerm_network_interface" "linux-nic" {
     name                          = "ar-linux-nic-conf-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Static"
-    private_ip_address            = "10.0.1.${21 + count.index}"
+    private_ip_address            = "10.64.16.${21 + count.index}"
     public_ip_address_id          = azurerm_public_ip.linux-publicip[count.index].id
   }
 }
 
 resource "azurerm_virtual_machine" "linux" {
-  count = length(var.linux_servers)
-  name = "ar-linux-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
-  location = var.azure.location
-  resource_group_name  = var.rg_name
-  network_interface_ids = [azurerm_network_interface.linux-nic[count.index].id]
-  vm_size               = "Standard_A4_v2"
+  count                         = length(var.linux_servers)
+  name                          = "ar-linux-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
+  location                      = var.azure.location
+  resource_group_name           = var.rg_name
+  network_interface_ids         = [azurerm_network_interface.linux-nic[count.index].id]
+  vm_size                       = "Standard_A4_v2"
   delete_os_disk_on_termination = true
 
   storage_os_disk {
@@ -71,7 +71,7 @@ resource "azurerm_virtual_machine" "linux" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command = <<-EOT
+    command     = <<-EOT
       cat <<EOF > vars/linux_vars_${count.index}.json
       {
         "ansible_python_interpreter": "/usr/bin/python3",
@@ -86,7 +86,7 @@ resource "azurerm_virtual_machine" "linux" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.azure.private_key_path}' -i '${azurerm_public_ip.linux-publicip[count.index].ip_address},' linux_server.yml -e @vars/linux_vars_${count.index}.json"
+    command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.azure.private_key_path}' -i '${azurerm_public_ip.linux-publicip[count.index].ip_address},' linux_server.yml -e @vars/linux_vars_${count.index}.json"
   }
 
 }

@@ -41,7 +41,7 @@ def get_instance_by_name(ec2_name, key_name, ar_name, region):
         str = instance['Tags'][0]['Value']
         if str == ec2_name:
             return instance
-        
+
 def get_instances_by_ids(instance_ids, ec2_name, key_name, ar_name, region):
     instances = get_all_instances(key_name, ar_name, region)
     result = []
@@ -54,6 +54,10 @@ def get_instances_by_ids(instance_ids, ec2_name, key_name, ar_name, region):
 def get_single_instance_public_ip(ec2_name, key_name, ar_name, region):
     instance = get_instance_by_name(ec2_name, key_name, ar_name, region)
     return instance['NetworkInterfaces'][0]['Association']['PublicIp']
+
+def get_single_instance_private_ip(ec2_name, key_name, ar_name, region):
+    instance = get_instance_by_name(ec2_name, key_name, ar_name, region)
+    return instance['NetworkInterfaces'][0]['PrivateIpAddress']
 
 
 def change_ec2_state(instances, new_state, log, region):
@@ -99,20 +103,20 @@ def ami_available(ami_name, region):
 
 def ami_available_other_region(ami_name):
     regions = [
-        "us-east-1", 
-        "us-east-2", 
-        "us-west-1", 
-        "us-west-2", 
-        "ca-central-1", 
-        "eu-west-1", 
-        "eu-west-2", 
-        "eu-central-1", 
-        "ap-southeast-1", 
-        "ap-southeast-2", 
-        "ap-south-1", 
-        "ap-northeast-1", 
-        "ap-northeast-2", 
-        "sa-east-1", 
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2",
+        "ca-central-1",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-central-1",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-south-1",
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "sa-east-1",
         "cn-north-1"
     ]
 
@@ -170,7 +174,7 @@ def check_s3_bucket(bucket_name):
 def create_s3_bucket(bucket_name, region, logger):
     client = boto3.client("s3", region_name=region)
     location = {'LocationConstraint': region}
-    
+
     try:
         response = client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration=location)
     except Exception as e:
@@ -284,7 +288,7 @@ def get_secret_key(name, logger):
 
 def get_secret_config(name, logger):
     client = boto3.client('secretsmanager')
-    
+
     response = client.get_secret_value(
         SecretId=name + '-config'
     )
@@ -320,7 +324,7 @@ def create_key_pair(name, region, logger):
     with open(ssh_key_name, "w") as ssh_key:
         ssh_key.write(response['KeyMaterial'])
     os.chmod(ssh_key_name, 0o600)
-    
+
     logger.info("Created key pair with name " + name)
 
     return response['KeyMaterial']

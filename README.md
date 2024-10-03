@@ -68,6 +68,9 @@ The following log sources are collected from the machines:
 - Attack Simulation Logs from Atomic Red Team and Caldera (```index = attack```)
 - Zeek Logs (```index = zeek```)
 - Snort Logs (```index = snort```)
+- Cisco Secure Endpoint Logs (```index = cisco_secure_endpoint```)
+- CrowdStrike Falcon Logs (```index = crowdstrike_falcon```)
+- Carbon Black Logs (```index = carbon_black_cloud```)
 
 ## Running 🏃‍♀️
 Attack Range supports different actions:

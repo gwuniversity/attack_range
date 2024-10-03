@@ -1,5 +1,5 @@
 resource "azurerm_public_ip" "phantom-publicip" {
-  count       = var.phantom_server.phantom_server == "1" ? 1 : 0
+  count               = var.phantom_server.phantom_server == "1" ? 1 : 0
   name                = "ar-phantom-ip-${var.general.key_name}-${var.general.attack_range_name}"
   location            = var.azure.location
   resource_group_name = var.rg_name
@@ -7,7 +7,7 @@ resource "azurerm_public_ip" "phantom-publicip" {
 }
 
 resource "azurerm_network_interface" "phantom-nic" {
-  count       = var.phantom_server.phantom_server == "1" ? 1 : 0
+  count               = var.phantom_server.phantom_server == "1" ? 1 : 0
   name                = "ar-phantom-nic-${var.general.key_name}-${var.general.attack_range_name}"
   location            = var.azure.location
   resource_group_name = var.rg_name
@@ -16,7 +16,7 @@ resource "azurerm_network_interface" "phantom-nic" {
     name                          = "ar-phantom-nic-conf-${var.general.key_name}-${var.general.attack_range_name}"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Static"
-    private_ip_address            = "10.0.1.13"
+    private_ip_address            = "10.64.16.13"
     public_ip_address_id          = azurerm_public_ip.phantom-publicip[count.index].id
   }
 }
@@ -72,7 +72,7 @@ resource "azurerm_virtual_machine" "phantom" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command = <<-EOT
+    command     = <<-EOT
       cat <<EOF > vars/phantom_vars.json
       {
         "general": ${jsonencode(var.general)},
@@ -86,7 +86,7 @@ resource "azurerm_virtual_machine" "phantom" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u centos --private-key '${var.azure.private_key_path}' -i '${azurerm_public_ip.phantom-publicip[0].ip_address},' phantom_server.yml -e @vars/phantom_vars.json"
+    command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u centos --private-key '${var.azure.private_key_path}' -i '${azurerm_public_ip.phantom-publicip[0].ip_address},' phantom_server.yml -e @vars/phantom_vars.json"
   }
 
 }

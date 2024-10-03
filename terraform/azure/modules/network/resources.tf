@@ -1,13 +1,13 @@
 
 resource "azurerm_resource_group" "attackrange" {
-  name = "ar-rg-${var.general.key_name}-${var.general.attack_range_name}"
+  name     = "ar-rg-${var.general.key_name}-${var.general.attack_range_name}"
   location = var.azure.location
 }
 
 resource "azurerm_virtual_network" "attackrange-network" {
-  name = "ar-vnet-${var.general.key_name}-${var.general.attack_range_name}"
-  address_space = ["10.0.0.0/16"]
-  location = var.azure.location
+  name                = "ar-vnet-${var.general.key_name}-${var.general.attack_range_name}"
+  address_space       = ["10.0.0.0/16"]
+  location            = var.azure.location
   resource_group_name = azurerm_resource_group.attackrange.name
 }
 
@@ -15,13 +15,13 @@ resource "azurerm_subnet" "attackrange-subnet" {
   name                 = "ar-subnet-${var.general.key_name}-${var.general.attack_range_name}"
   resource_group_name  = azurerm_resource_group.attackrange.name
   virtual_network_name = azurerm_virtual_network.attackrange-network.name
-  address_prefixes       = ["10.0.1.0/24"]
+  address_prefixes     = ["10.64.16.0/24"]
 }
 
 resource "azurerm_network_security_group" "attackrange-nsg" {
   name                = "ar-nsg-${var.general.key_name}-${var.general.attack_range_name}"
-  location = var.azure.location
-  resource_group_name  = azurerm_resource_group.attackrange.name
+  location            = var.azure.location
+  resource_group_name = azurerm_resource_group.attackrange.name
 
   security_rule {
     name                       = "SSH"
@@ -95,7 +95,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "*"
-    source_address_prefix      = "10.0.1.0/24"
+    source_address_prefix      = "10.64.16.0/24"
     destination_address_prefix = "*"
   }
 

@@ -1,16 +1,11 @@
-
-data "aws_availability_zones" "available" {}
-
 locals {
   cluster_name = "cluster_${var.general.key_name}_${var.general.attack_range_name}"
-  subnet_id    = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.aws.private_subnet_id
-
+  subnet_id    = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.aws.public_subnet_id
 }
 
 data "aws_subnet" "selected" {
   id = local.subnet_id
 }
-
 
 # Create VPC if var.aws.create_vpc is set to "1"
 module "vpc" {
@@ -19,16 +14,19 @@ module "vpc" {
 
   name                 = "vpc_${var.general.key_name}_${var.general.attack_range_name}"
   cidr                 = "10.0.0.0/16"
-  azs                  = data.aws_availability_zones.available.names
   public_subnets       = [var.aws.network_cidr]
+  private_subnets      = [var.aws.private_network_cidr]
   enable_dns_hostnames = true
 }
 
-# Use the public subnet from the created VPC or the existing public subnet
+# Use the public or private subnet CIDR based on var.aws.use_public_ips
 locals {
-  ar_subnet = var.aws.create_vpc == "1" ? module.vpc[0].public_subnets : data.aws_subnet.selected.cidr_block
-  vpc_id    = var.aws.create_vpc == "1" ? module.vpc[0].vpc_id : var.aws.vpc_id
+  ar_subnet = var.aws.create_vpc == "1" ? (
+    var.aws.use_public_ips == "0" ? module.vpc[0].private_subnets[0] : module.vpc[0].public_subnets[0]
+  ) : data.aws_subnet.selected.cidr_block
+  vpc_id = var.aws.create_vpc == "1" ? module.vpc[0].vpc_id : var.aws.vpc_id
 }
+
 
 resource "aws_security_group" "default" {
   name   = "sg_subnets_${var.general.key_name}_${var.general.attack_range_name}"
@@ -63,6 +61,13 @@ resource "aws_security_group" "default" {
   }
 
   ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [local.ar_subnet]
+  }
+
+  ingress {
     from_port   = 8000
     to_port     = 8000
     protocol    = "tcp"
@@ -87,14 +92,14 @@ resource "aws_security_group" "default" {
     from_port   = 9997
     to_port     = 9997
     protocol    = "tcp"
-    cidr_blocks = split(",", var.general.ip_whitelist)
+    cidr_blocks = [local.ar_subnet]
   }
 
   ingress {
     from_port   = 8089
     to_port     = 8089
     protocol    = "tcp"
-    cidr_blocks = split(",", var.general.ip_whitelist)
+    cidr_blocks = [local.ar_subnet]
   }
 
   ingress {
@@ -105,10 +110,24 @@ resource "aws_security_group" "default" {
   }
 
   ingress {
+    from_port   = 5986
+    to_port     = 5986
+    protocol    = "tcp"
+    cidr_blocks = [local.ar_subnet]
+  }
+
+  ingress {
     from_port   = 5985
     to_port     = 5985
     protocol    = "tcp"
     cidr_blocks = split(",", var.general.ip_whitelist)
+  }
+
+  ingress {
+    from_port   = 5985
+    to_port     = 5985
+    protocol    = "tcp"
+    cidr_blocks = [local.ar_subnet]
   }
 
   ingress {
