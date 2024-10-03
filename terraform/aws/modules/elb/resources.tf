@@ -5,6 +5,7 @@ data "aws_acm_certificate" "cert" {
 
 resource "aws_lb" "main_elb" {
   count = var.httpd_server.use_alb == "1" ? 1 : 0
+  name  = "ar-elb-${var.general.key_name}-${var.general.attack_range_name}"
 
   internal                         = true
   enable_cross_zone_load_balancing = true
@@ -16,7 +17,7 @@ resource "aws_lb" "main_elb" {
   enable_deletion_protection = false
 
   tags = {
-    Name = "ar-${var.general.key_name}_${var.general.attack_range_name}-elb"
+    Name = "ar-elb-${var.general.key_name}-${var.general.attack_range_name}"
   }
 }
 
