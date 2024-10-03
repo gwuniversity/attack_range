@@ -78,7 +78,7 @@ resource "aws_instance" "splunk-server" {
   ami                         = data.aws_ami.splunk_server[0].id
   instance_type               = "t3.2xlarge"
   key_name                    = var.general.key_name
-  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.ec2_subnet_id
+  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.subnet_1 : var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   private_ip                  = var.splunk_server.splunk_server_ip
   iam_instance_profile        = ((var.aws.cloudtrail == "1") || (var.general.carbon_black_cloud == "1")) && (var.splunk_server.byo_splunk == "0") ? aws_iam_instance_profile.splunk_profile[0].name : var.instance_profile_name

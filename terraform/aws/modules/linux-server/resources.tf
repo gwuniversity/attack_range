@@ -21,7 +21,7 @@ resource "aws_instance" "linux_server" {
   ami                         = data.aws_ami.linux_server[count.index].id
   instance_type               = "t3.xlarge"
   key_name                    = var.general.key_name
-  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.ec2_subnet_id
+  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.subnet_1 : var.ec2_subnet_id
   vpc_security_group_ids      = [var.vpc_security_group_ids]
   iam_instance_profile        = var.instance_profile_name
   private_ip                  = "${var.aws.network_prefix}.${var.aws.first_dynamic_ip + 5 + count.index}"

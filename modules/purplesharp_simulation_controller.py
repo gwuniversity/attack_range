@@ -11,17 +11,22 @@ class PurplesharpSimulationController(SimulationController):
 
     def simulate(self, target, technique, playbook) -> None:
         if self.config['general']['cloud_provider'] == 'aws':
-            target_public_ip = aws_service.get_single_instance_public_ip(target, self.config['general']['key_name'], self.config['general']['attack_range_name'], self.config['aws']['region'])
+            try:
+                public_ip = aws_service.get_single_instance_public_ip(target, self.config['general']['key_name'], self.config['general']['attack_range_name'], self.config['aws']['region'])
+            except Exception as e:
+                public_ip = None
+            private_ip = aws_service.get_single_instance_private_ip(target, self.config['general']['key_name'], self.config['general']['attack_range_name'], self.config['aws']['region'])
+            target_ip = public_ip if public_ip else private_ip
             ansible_user = 'Administrator'
             ansible_port = 5985
 
         elif self.config['general']['cloud_provider'] == 'azure':
-            target_public_ip = azure_service.get_instance(target, self.config['general']['key_name'], self.config['general']['attack_range_name'])['public_ip']
+            target_ip = azure_service.get_instance(target, self.config['general']['key_name'], self.config['general']['attack_range_name'])['public_ip']
             ansible_user = 'AzureAdmin'
             ansible_port = 5985
 
         elif self.config['general']['cloud_provider'] == 'local':
-            target_public_ip = '192.168.56.' + str(14 + int(target[-1]))
+            target_ip = '192.168.56.' + str(14 + int(target[-1]))
             ansible_user = 'Administrator'
             ansible_port = 5985 + int(target[-1])
 
@@ -36,14 +41,14 @@ class PurplesharpSimulationController(SimulationController):
         if "win" in target:
             runner = ansible_runner.run(
                 private_data_dir=os.path.join(os.path.dirname(__file__), '../'),
-                cmdline=str('-i ' + target_public_ip + ', '),
+                cmdline=str('-i ' + target_ip + ', '),
                 roles_path=os.path.join(os.path.dirname(__file__), 'ansible/roles'),
                 playbook=os.path.join(os.path.dirname(__file__), 'ansible/purplesharp.yml'),
                 extravars= {
-                    'ansible_port': ansible_port, 
+                    'ansible_port': ansible_port,
                     'ansible_connection': 'winrm',
                     'ansible_winrm_server_cert_validation': 'ignore',
-                    'ansible_user': ansible_user, 
+                    'ansible_user': ansible_user,
                     'ansible_password': self.config['general']['attack_range_password'],
                     'run_simulation_playbook': run_simulation_playbook,
                     'simulation_playbook': simulation_playbook,

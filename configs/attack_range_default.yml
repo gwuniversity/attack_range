@@ -88,11 +88,9 @@ aws:
   first_dynamic_ip: 14
 
   vpc_id: ""
-  public_subnet_id: ""
-  alt_subnet_id: ""
-  private_subnet_id: ""
+  subnet_1: ""
+  subnet_2: ""
   # VPC ID and subnet arn for byo vpc in AWS.
-
   use_public_ips: "1"
 
   windows_ami: ""

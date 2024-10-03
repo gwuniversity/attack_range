@@ -19,7 +19,7 @@ resource "aws_instance" "httpd_server" {
   ami                    = data.aws_ami.httpd_server[0].id
   instance_type          = "t3.small"
   key_name               = var.general.key_name
-  subnet_id              = var.aws.private_subnet_id
+  subnet_id              = var.aws.subnet_1
   vpc_security_group_ids = [var.vpc_security_group_ids]
   iam_instance_profile   = var.instance_profile_name
 

@@ -2,10 +2,34 @@ data "aws_acm_certificate" "cert" {
   domain = var.httpd_server.domain
 }
 
+data "aws_elb_service_account" "main" {}
+
+resource "aws_s3_bucket" "elb" {
+  bucket        = "${var.general.name_prefix}-${var.general.key_name}-${var.general.attack_range_name}-elb-access-${var.aws.region}"
+  force_destroy = true
+}
+
+resource "aws_s3_bucket_policy" "elb_logs" {
+  bucket = aws_s3_bucket.elb.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = data.aws_elb_service_account.main.arn
+        }
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.elb.arn}/*"
+      }
+    ]
+  })
+}
 
 resource "aws_lb" "main_elb" {
   count = var.httpd_server.use_alb == "1" ? 1 : 0
-  name  = "ar-elb-${var.general.key_name}-${var.general.attack_range_name}"
+  name  = "ar-elb-www-${var.general.key_name}-${var.general.attack_range_name}"
 
   internal                         = true
   enable_cross_zone_load_balancing = true
@@ -13,12 +37,19 @@ resource "aws_lb" "main_elb" {
   load_balancer_type               = "application"
 
   security_groups            = [var.elb_security_group_id]
-  subnets                    = [var.ec2_subnet_id, var.aws.alt_subnet_id]
+  subnets                    = [var.ec2_subnet_id, var.aws.subnet_2]
   enable_deletion_protection = false
 
-  tags = {
-    Name = "ar-elb-${var.general.key_name}-${var.general.attack_range_name}"
+  access_logs {
+    bucket  = aws_s3_bucket.elb.bucket
+    enabled = true
   }
+
+  tags = {
+    Name = "ar-elb-www-${var.general.key_name}-${var.general.attack_range_name}"
+  }
+
+  depends_on = [aws_s3_bucket_policy.elb_logs]
 }
 
 #############################
@@ -32,7 +63,7 @@ resource "aws_lb_target_group" "main_https_tg" {
 
   health_check {
     protocol            = "HTTPS"
-    path                = "/services/collector/health/1.0"
+    path                = "/"
     interval            = "15"
     healthy_threshold   = "2"
     unhealthy_threshold = "2"
@@ -75,7 +106,7 @@ resource "aws_lb_target_group" "main_http_tg" {
 
   health_check {
     protocol            = "HTTP"
-    path                = "/services/collector/health/1.0"
+    path                = "/"
     interval            = "15"
     healthy_threshold   = "2"
     unhealthy_threshold = "2"

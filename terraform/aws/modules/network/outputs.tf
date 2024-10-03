@@ -7,5 +7,5 @@ output "vpc_id" {
 }
 
 output "ec2_subnet_id" {
-  value = var.aws.create_vpc == "1" ? module.vpc[0].public_subnets[0].id : var.aws.public_subnet_id
+  value = var.aws.create_vpc == "1" ? module.vpc[0].public_subnets[0].id : var.aws.subnet_1
 }

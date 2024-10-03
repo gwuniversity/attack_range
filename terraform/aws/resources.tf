@@ -53,7 +53,7 @@ module "linux-server" {
   vpc_security_group_ids = module.networkModule.sg_vpc_id
   ec2_subnet_id = try(
     var.linux_servers.subnet_id,
-    var.aws.use_public_ips == "1" ? var.aws.private_subnet_id : null,
+    var.aws.use_public_ips == "1" ? var.aws.subnet_1 : null,
     module.networkModule.ec2_subnet_id
   )
   general               = var.general

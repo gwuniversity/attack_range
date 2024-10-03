@@ -1,10 +1,5 @@
-locals {
-  cluster_name = "cluster_${var.general.key_name}_${var.general.attack_range_name}"
-  subnet_id    = var.aws.use_public_ips == "0" ? var.aws.private_subnet_id : var.aws.public_subnet_id
-}
-
 data "aws_subnet" "selected" {
-  id = local.subnet_id
+  id = var.aws.subnet_1
 }
 
 # Create VPC if var.aws.create_vpc is set to "1"
