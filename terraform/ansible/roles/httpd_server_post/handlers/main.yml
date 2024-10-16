@@ -6,3 +6,6 @@
   service:
     name: php{{ php_version.stdout }}-fpm
     state: restarted
+- name: restart splunk
+  service: name=SplunkForwarder state=restarted
+  become: True

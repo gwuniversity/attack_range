@@ -41,7 +41,7 @@ resource "aws_instance" "bastion_host" {
   vpc_security_group_ids      = [aws_security_group.main.id]
   iam_instance_profile        = var.instance_profile_name
   tags = {
-    Name = "ar-bastion-${var.general.key_name}-${var.general.attack_range_name}"
+    Name = "ar-bastion-${var.general.attack_range_name}"
   }
 }
 

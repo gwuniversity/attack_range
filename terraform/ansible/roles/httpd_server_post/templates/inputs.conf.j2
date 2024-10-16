@@ -1,0 +1,10 @@
+# apache
+[monitor:///var/log/apache2/*access*]
+disabled = false
+index = web
+sourcetype = access_combined
+
+[monitor:///var/log/apache2/*error*]
+disabled = false
+index = web
+sourcetype = apache_error

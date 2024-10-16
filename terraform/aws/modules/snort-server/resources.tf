@@ -124,3 +124,13 @@ resource "aws_ec2_traffic_mirror_session" "snort_linux_session" {
   network_interface_id     = var.linux_server_instances[count.index].primary_network_interface_id
   session_number           = 101
 }
+
+resource "aws_ec2_traffic_mirror_session" "snort_httpd_session" {
+  count                    = var.snort_server.snort_server == "1" ? 1 : 0
+  description              = "Snort Mirror Session for Apache Server"
+  depends_on               = [var.apache_server_instance]
+  traffic_mirror_filter_id = aws_ec2_traffic_mirror_filter.snort_filter[0].id
+  traffic_mirror_target_id = aws_ec2_traffic_mirror_target.snort_target[0].id
+  network_interface_id     = var.apache_server_instance[0].primary_network_interface_id
+  session_number           = 101
+}

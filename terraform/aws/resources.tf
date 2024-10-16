@@ -97,6 +97,7 @@ module "zeek-server" {
   linux_servers            = var.linux_servers
   linux_server_instances   = module.linux-server.linux_servers
   splunk_server            = var.splunk_server
+  apache_server_instance   = module.apache_httpd.httpd_server
 }
 
 module "snort-server" {
@@ -111,6 +112,7 @@ module "snort-server" {
   linux_servers            = var.linux_servers
   linux_server_instances   = module.linux-server.linux_servers
   splunk_server            = var.splunk_server
+  apache_server_instance   = module.apache_httpd.httpd_server
 }
 
 module "nlb_security_group" {
@@ -189,7 +191,7 @@ module "waf" {
 }
 
 resource "aws_s3_bucket" "s3" {
-  bucket        = "${var.general.name_prefix}-${var.general.key_name}-${var.general.attack_range_name}-waf-backup-${var.aws.region}"
+  bucket        = "${var.general.name_prefix}-${var.general.attack_range_name}-waf-backup-${var.aws.region}"
   force_destroy = true
 }
 

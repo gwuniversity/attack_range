@@ -56,3 +56,5 @@
   when: httpd_server.install_lamp == "1"
 - include_tasks: apps.yml
   when: httpd_server.install_dvwa == "1" or httpd_server.install_mutillidae == "1" or httpd_server.install_sqli == "1"
+
+- include_tasks: splunk.yml

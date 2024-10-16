@@ -1,5 +1,5 @@
 resource "aws_security_group" "elb" {
-  name   = "sg_elb_${var.general.key_name}_${var.general.attack_range_name}"
+  name   = "sg_elb_${var.general.key_name}-${var.general.attack_range_name}"
   vpc_id = var.aws.vpc_id
 }
 

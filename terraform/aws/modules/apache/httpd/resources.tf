@@ -20,6 +20,7 @@ resource "aws_instance" "httpd_server" {
   instance_type          = "t3.small"
   key_name               = var.general.key_name
   subnet_id              = var.aws.subnet_1
+  private_ip             = var.httpd_server.httpd_server_ip
   vpc_security_group_ids = [var.vpc_security_group_ids]
   iam_instance_profile   = var.instance_profile_name
 

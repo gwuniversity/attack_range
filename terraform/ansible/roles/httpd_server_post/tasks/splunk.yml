@@ -1,0 +1,9 @@
+- name: Create inputs.conf file
+  become: true
+  become_user: root
+  template:
+    src: inputs.conf.j2
+    dest: /opt/splunkforwarder/etc/system/local/inputs.conf
+    mode: 0644
+  notify:
+    - restart splunk

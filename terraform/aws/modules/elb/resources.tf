@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 data "aws_acm_certificate" "cert" {
   domain = var.httpd_server.domain
 }
@@ -29,7 +31,7 @@ resource "aws_s3_bucket_policy" "elb_logs" {
 
 resource "aws_lb" "main_elb" {
   count = var.httpd_server.use_alb == "1" ? 1 : 0
-  name  = "ar-elb-www-${var.general.key_name}-${var.general.attack_range_name}"
+  name  = "ar-elb-www-${var.general.key_name}${var.general.attack_range_name}"
 
   internal                         = true
   enable_cross_zone_load_balancing = true
@@ -41,7 +43,8 @@ resource "aws_lb" "main_elb" {
   enable_deletion_protection = false
 
   access_logs {
-    bucket  = aws_s3_bucket.elb.bucket
+    bucket  = aws_s3_bucket.elb.id
+    prefix  = "${data.aws_caller_identity.current.id}/elb-ar-elb-www-${var.general.key_name}-${var.general.attack_range_name}"
     enabled = true
   }
 

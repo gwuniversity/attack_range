@@ -3,6 +3,10 @@ output "instance_id" {
   value       = aws_instance.httpd_server[0].id
 }
 
+output "httpd_server" {
+  value = aws_instance.httpd_server
+}
+
 output "private_ip" {
   description = "The private IP address of the heavy forwarder (needed for SSH through bastion host)"
   value       = aws_instance.httpd_server[0].private_ip

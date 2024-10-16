@@ -8,3 +8,4 @@ variable "linux_servers" {}
 variable "linux_server_instances" {}
 variable "splunk_server" {}
 variable "snort_server" {}
+variable "apache_server_instance" {}

@@ -17,8 +17,9 @@ data "aws_ami" "zeek_server" {
 }
 
 resource "aws_instance" "zeek_sensor" {
-  count                       = var.zeek_server.zeek_server == "1" ? 1 : 0
-  ami                         = data.aws_ami.zeek_server[0].id
+  count = var.zeek_server.zeek_server == "1" ? 1 : 0
+  # ami                         = data.aws_ami.zeek_server[0].id
+  ami                         = "ami-0ebc36e88d9d369a0"
   instance_type               = "m5.2xlarge"
   key_name                    = var.general.key_name
   subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.subnet_1 : var.ec2_subnet_id
@@ -117,5 +118,15 @@ resource "aws_ec2_traffic_mirror_session" "zeek_linux_session" {
   traffic_mirror_filter_id = aws_ec2_traffic_mirror_filter.zeek_filter[0].id
   traffic_mirror_target_id = aws_ec2_traffic_mirror_target.zeek_target[0].id
   network_interface_id     = var.linux_server_instances[count.index].primary_network_interface_id
+  session_number           = 100
+}
+
+resource "aws_ec2_traffic_mirror_session" "zeek_httpd_session" {
+  count                    = var.zeek_server.zeek_server == "1" ? 1 : 0
+  description              = "Zeek Mirror Session for Apache Server"
+  depends_on               = [var.apache_server_instance]
+  traffic_mirror_filter_id = aws_ec2_traffic_mirror_filter.zeek_filter[0].id
+  traffic_mirror_target_id = aws_ec2_traffic_mirror_target.zeek_target[0].id
+  network_interface_id     = var.apache_server_instance[0].primary_network_interface_id
   session_number           = 100
 }
