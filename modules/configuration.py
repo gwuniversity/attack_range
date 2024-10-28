@@ -357,7 +357,7 @@ starting configuration for AT-ST mech walker
                 "message": "enter public ips that are allowed to reach the attack_range.\nExample: {0}/32,0.0.0.0/0".format(
                     external_ip
                 ),
-                "name": "ip_whitelist",
+                "name": "ip_allow_list",
                 "default": external_ip + "/32",
             },
             {
@@ -401,7 +401,7 @@ starting configuration for AT-ST mech walker
                 configuration["azure"]["region"] = "West Europe"
 
         # rest of configs
-        configuration["general"]["ip_whitelist"] = answers["ip_whitelist"]
+        configuration["general"]["ip_allow_list"] = answers["ip_allow_list"]
         configuration["general"]["attack_range_name"] = answers["attack_range_name"]
 
     print("> configuring attack_range environment")

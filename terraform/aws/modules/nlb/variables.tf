@@ -12,4 +12,4 @@ variable "edge-processor_instance_id" {
 variable "aws" {}
 variable "edge_processor" {}
 variable "general" {}
-variable "ec2_subnet_id" {}
+variable "tags" {}

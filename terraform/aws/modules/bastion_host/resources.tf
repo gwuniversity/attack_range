@@ -8,7 +8,7 @@ resource "aws_security_group_rule" "allow_inbound_ssh" {
   from_port         = "22"
   to_port           = "22"
   protocol          = "tcp"
-  cidr_blocks       = split(",", var.general.ip_whitelist)
+  cidr_blocks       = split(",", var.general.ip_allow_list)
   security_group_id = aws_security_group.main.id
 }
 

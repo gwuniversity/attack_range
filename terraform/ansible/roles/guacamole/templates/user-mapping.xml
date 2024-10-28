@@ -38,7 +38,7 @@
         {% for server in windows_servers_list %}
         <connection name="ar-win-{{ general.key_name }}-{{ general.attack_range_name }}-{{ loop.index-1 }}">
             <protocol>rdp</protocol>
-            <param name="hostname">10.64.16.{{loop.index-1+20}}</param>
+            <param name="hostname">10.64.16.{{loop.index-1+40}}</param>
             <param name="port">3389</param>
              {% if general.cloud_provider == 'azure' %}
             <param name="username">AzureAdmin</param>
@@ -60,7 +60,7 @@
         {% for server in linux_servers_list %}
         <connection name="ar-linux-{{ general.key_name }}-{{ general.attack_range_name }}-{{ loop.index-1 }}">
             <protocol>ssh</protocol>
-            <param name="hostname">10.64.16.{{loop.index-1+25}}</param>
+            <param name="hostname">10.64.16.{{loop.index-1+45}}</param>
             <param name="port">22</param>
             <param name="username">ubuntu</param>
             {% if general.cloud_provider == 'aws' %}

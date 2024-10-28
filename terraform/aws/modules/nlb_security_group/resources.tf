@@ -1,6 +1,11 @@
+data "aws_vpc" "selected" {
+  id = var.aws.vpc_id
+}
+
 resource "aws_security_group" "nlb" {
   name   = "sg_nlb_${var.general.key_name}-${var.general.attack_range_name}"
   vpc_id = var.aws.vpc_id
+  tags   = var.tags
 }
 
 resource "aws_security_group_rule" "allow_inbound_splunkd" {
@@ -8,7 +13,7 @@ resource "aws_security_group_rule" "allow_inbound_splunkd" {
   from_port         = "9997"
   to_port           = "9997"
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   security_group_id = aws_security_group.nlb.id
 }
 
@@ -17,7 +22,7 @@ resource "aws_security_group_rule" "allow_inbound_hec" {
   from_port         = "8088"
   to_port           = "8088"
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   security_group_id = aws_security_group.nlb.id
 }
 
@@ -26,7 +31,7 @@ resource "aws_security_group_rule" "allow_inbound_syslog" {
   from_port         = "514"
   to_port           = "514"
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   security_group_id = aws_security_group.nlb.id
 }
 
@@ -35,6 +40,6 @@ resource "aws_security_group_rule" "allow_all_outbound" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   security_group_id = aws_security_group.nlb.id
 }

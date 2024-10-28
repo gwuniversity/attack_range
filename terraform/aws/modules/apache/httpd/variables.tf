@@ -13,3 +13,4 @@ variable "general" {}
 variable "httpd_server" {}
 variable "splunk_server" {}
 variable "vpc_security_group_ids" {}
+variable "tags" {}

@@ -15,7 +15,7 @@ resource "azurerm_subnet" "attackrange-subnet" {
   name                 = "ar-subnet-${var.general.key_name}-${var.general.attack_range_name}"
   resource_group_name  = azurerm_resource_group.attackrange.name
   virtual_network_name = azurerm_virtual_network.attackrange-network.name
-  address_prefixes     = ["10.64.16.0/24"]
+  address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_network_security_group" "attackrange-nsg" {
@@ -31,7 +31,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefixes    = [var.general.ip_whitelist]
+    source_address_prefixes    = [var.general.ip_allow_list]
     destination_address_prefix = "*"
   }
 
@@ -43,7 +43,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "8000"
-    source_address_prefixes    = [var.general.ip_whitelist]
+    source_address_prefixes    = [var.general.ip_allow_list]
     destination_address_prefix = "*"
   }
 
@@ -55,7 +55,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "8089"
-    source_address_prefixes    = [var.general.ip_whitelist]
+    source_address_prefixes    = [var.general.ip_allow_list]
     destination_address_prefix = "*"
   }
 
@@ -68,7 +68,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "3389"
-    source_address_prefixes    = [var.general.ip_whitelist]
+    source_address_prefixes    = [var.general.ip_allow_list]
     destination_address_prefix = "*"
   }
 
@@ -81,7 +81,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "5985-5986"
-    source_address_prefixes    = [var.general.ip_whitelist]
+    source_address_prefixes    = [var.general.ip_allow_list]
     destination_address_prefix = "*"
   }
 
@@ -95,7 +95,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "*"
-    source_address_prefix      = "10.64.16.0/24"
+    source_address_prefix      = "10.0.1.0/24"
     destination_address_prefix = "*"
   }
 
@@ -107,7 +107,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "80"
-    source_address_prefixes    = [var.general.ip_whitelist]
+    source_address_prefixes    = [var.general.ip_allow_list]
     destination_address_prefix = "*"
   }
 
@@ -119,7 +119,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefixes    = [var.general.ip_whitelist]
+    source_address_prefixes    = [var.general.ip_allow_list]
     destination_address_prefix = "*"
   }
 
@@ -131,7 +131,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "8888"
-    source_address_prefixes    = [var.general.ip_whitelist]
+    source_address_prefixes    = [var.general.ip_allow_list]
     destination_address_prefix = "*"
   }
 
@@ -143,7 +143,7 @@ resource "azurerm_network_security_group" "attackrange-nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "8080"
-    source_address_prefixes    = [var.general.ip_whitelist]
+    source_address_prefixes    = [var.general.ip_allow_list]
     destination_address_prefix = "*"
   }
 

@@ -9,3 +9,4 @@ variable "edge_processor" {}
 variable "splunk_server" {}
 variable "instance_profile_name" {}
 variable "vpc_security_group_ids" {}
+variable "tags" {}

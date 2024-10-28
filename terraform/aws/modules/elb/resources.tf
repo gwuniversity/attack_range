@@ -7,12 +7,15 @@ data "aws_acm_certificate" "cert" {
 data "aws_elb_service_account" "main" {}
 
 resource "aws_s3_bucket" "elb" {
-  bucket        = "${var.general.name_prefix}-${var.general.key_name}-${var.general.attack_range_name}-elb-access-${var.aws.region}"
+  count         = var.httpd_server.elb_bucket == null ? 1 : 0
+  bucket        = "${var.general.name_prefix}-${var.general.attack_range_name}-elb-access-${var.aws.region}"
   force_destroy = true
+  tags          = var.tags
 }
 
 resource "aws_s3_bucket_policy" "elb_logs" {
-  bucket = aws_s3_bucket.elb.id
+  count  = var.httpd_server.elb_bucket == null ? 1 : 0
+  bucket = aws_s3_bucket.elb[count.index].id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -23,7 +26,7 @@ resource "aws_s3_bucket_policy" "elb_logs" {
           AWS = data.aws_elb_service_account.main.arn
         }
         Action   = "s3:PutObject"
-        Resource = "${aws_s3_bucket.elb.arn}/*"
+        Resource = "${aws_s3_bucket.elb[count.index].arn}/*"
       }
     ]
   })
@@ -31,7 +34,7 @@ resource "aws_s3_bucket_policy" "elb_logs" {
 
 resource "aws_lb" "main_elb" {
   count = var.httpd_server.use_alb == "1" ? 1 : 0
-  name  = "ar-elb-www-${var.general.key_name}${var.general.attack_range_name}"
+  name  = "ar-elb-www-${var.general.attack_range_name}"
 
   internal                         = true
   enable_cross_zone_load_balancing = true
@@ -39,18 +42,18 @@ resource "aws_lb" "main_elb" {
   load_balancer_type               = "application"
 
   security_groups            = [var.elb_security_group_id]
-  subnets                    = [var.ec2_subnet_id, var.aws.subnet_2]
+  subnets                    = [var.aws.public_subnet_1, var.aws.public_subnet_2]
   enable_deletion_protection = false
 
   access_logs {
-    bucket  = aws_s3_bucket.elb.id
-    prefix  = "${data.aws_caller_identity.current.id}/elb-ar-elb-www-${var.general.key_name}-${var.general.attack_range_name}"
+    bucket  = var.httpd_server.elb_bucket == null ? aws_s3_bucket.elb[count.index].id : var.httpd_server.elb_bucket
+    prefix  = "${data.aws_caller_identity.current.id}/elb-ar-elb-www-${var.general.attack_range_name}"
     enabled = true
   }
 
-  tags = {
-    Name = "ar-elb-www-${var.general.key_name}-${var.general.attack_range_name}"
-  }
+  tags = merge({ Name = "ar-elb-www-${var.general.attack_range_name}" },
+    var.tags
+  )
 
   depends_on = [aws_s3_bucket_policy.elb_logs]
 }
@@ -73,9 +76,9 @@ resource "aws_lb_target_group" "main_https_tg" {
     timeout             = "5"
   }
 
-  tags = {
-    Name = "ar-${var.general.key_name}_${var.general.attack_range_name}-https-tg"
-  }
+  tags = merge({ Name = "ar-${var.general.key_name}_${var.general.attack_range_name}-https-tg" },
+    var.tags
+  )
 }
 
 resource "aws_lb_target_group_attachment" "apache-httpd_https" {
@@ -117,9 +120,9 @@ resource "aws_lb_target_group" "main_http_tg" {
     port                = "80"
   }
 
-  tags = {
-    Name = "ar-${var.general.key_name}_${var.general.attack_range_name}-http-tg"
-  }
+  tags = merge({ Name = "ar-${var.general.key_name}_${var.general.attack_range_name}-http-tg" },
+    var.tags
+  )
 }
 
 resource "aws_lb_target_group_attachment" "apache-httpd_http" {

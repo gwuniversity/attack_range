@@ -1,8 +1,9 @@
 locals {
 
   tags = {
-    service : "Attack Range",
-    owner : "Purple Team"
+    service : "Security"
+    service_category : "Detection Engineering"
+    owner : "PurpleTeam"
     version : "1.0.0"
   }
 }

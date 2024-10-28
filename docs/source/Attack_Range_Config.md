@@ -19,10 +19,10 @@ general:
   attack_range_name: "ar"
   # Attack range Name let you build multiple Attack Ranges by changing this parameter.
 
-  ip_whitelist: "0.0.0.0/0"
+  ip_allow_list: "0.0.0.0/0"
   # Blocks from which Attack Range machines can be reached.
   # This allow comma-separated blocks
-  # ip_whitelist = 0.0.0.0/0,35.153.82.195/32
+  # ip_allow_list = 0.0.0.0/0,35.153.82.195/32
 
   crowdstrike_falcon: "0"
 # Enable/Disable Crowdstrike Falcon by setting this to 1 or 0.
@@ -191,7 +191,7 @@ windows_servers_default:
   # Define the hostname for the Windows Server.
 
   windows_image: "windows-server-2019"
-  # Name of the image of the Windows Server. 
+  # Name of the image of the Windows Server.
 
   create_domain: "0"
   # Create Domain will turn this Windows Server into a Domain Controller. Enable by setting this to 1.

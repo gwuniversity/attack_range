@@ -8,7 +8,7 @@ variable "apache-httpd_instance_id" {
   type        = string
 }
 
-variable "ec2_subnet_id" {}
 variable "aws" {}
 variable "general" {}
 variable "httpd_server" {}
+variable "tags" {}

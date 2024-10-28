@@ -1,14 +1,18 @@
 resource "aws_lb" "nlb" {
   count                                                        = var.edge_processor.use_nlb == "1" ? 1 : 0
-  name                                                         = "ar-nlb-edge-${var.general.key_name}-${var.general.attack_range_name}"
+  name                                                         = "ar-nlb-edge-${var.general.attack_range_name}"
   internal                                                     = true # Set to true for internal/private NLB
   load_balancer_type                                           = "network"
   dns_record_client_routing_policy                             = "availability_zone_affinity"
   security_groups                                              = [var.nlb_security_group_id]
-  subnets                                                      = [var.ec2_subnet_id, var.aws.subnet_2]
+  subnets                                                      = [var.aws.private_subnet_1, var.aws.private_subnet_2]
   enable_deletion_protection                                   = false
   enable_cross_zone_load_balancing                             = true
   enforce_security_group_inbound_rules_on_private_link_traffic = "off"
+
+  tags = merge({ Name = "ar-nlb-edge-${var.general.key_name}-${var.general.attack_range_name}" },
+    var.tags
+  )
 }
 
 resource "aws_lb_target_group" "splunkd_tg" {
@@ -17,9 +21,9 @@ resource "aws_lb_target_group" "splunkd_tg" {
   protocol = "TCP"
   vpc_id   = var.aws.vpc_id
 
-  tags = {
-    Name = "ar-nlb-edge-${var.general.key_name}-${var.general.attack_range_name}"
-  }
+  tags = merge({ Name = "ar-nlb-edge-${var.general.attack_range_name}" },
+    var.tags
+  )
 }
 
 resource "aws_lb_target_group_attachment" "edge_splunkd" {
@@ -46,9 +50,9 @@ resource "aws_lb_target_group" "hec_tg" {
   protocol = "TCP"
   vpc_id   = var.aws.vpc_id
 
-  tags = {
-    Name = "${var.general.key_name}_${var.general.attack_range_name}-hec-tg"
-  }
+  tags = merge({ Name = "${var.general.key_name}_${var.general.attack_range_name}-hec-tg" },
+    var.tags
+  )
 }
 
 resource "aws_lb_target_group_attachment" "edge_hec" {
@@ -75,9 +79,9 @@ resource "aws_lb_target_group" "syslog_tg" {
   protocol = "TCP"
   vpc_id   = var.aws.vpc_id
 
-  tags = {
-    Name = "${var.general.key_name}_${var.general.attack_range_name}-syslog-tg"
-  }
+  tags = merge({ Name = "${var.general.key_name}_${var.general.attack_range_name}-syslog-tg" },
+    var.tags
+  )
 }
 
 resource "aws_lb_target_group_attachment" "edge_syslog" {

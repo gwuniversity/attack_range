@@ -16,7 +16,7 @@ resource "azurerm_network_interface" "phantom-nic" {
     name                          = "ar-phantom-nic-conf-${var.general.key_name}-${var.general.attack_range_name}"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Static"
-    private_ip_address            = "10.64.16.13"
+    private_ip_address            = "10.0.1.13"
     public_ip_address_id          = azurerm_public_ip.phantom-publicip[count.index].id
   }
 }

@@ -19,9 +19,9 @@ resource "aws_instance" "httpd_server" {
   ami                    = data.aws_ami.httpd_server[0].id
   instance_type          = "t3.small"
   key_name               = var.general.key_name
-  subnet_id              = var.aws.subnet_1
+  subnet_id              = var.aws.private_subnet_2
   private_ip             = var.httpd_server.httpd_server_ip
-  vpc_security_group_ids = [var.vpc_security_group_ids]
+  vpc_security_group_ids = concat(var.vpc_security_group_ids, [aws_security_group.apache-httpd.id])
   iam_instance_profile   = var.instance_profile_name
 
   root_block_device {
@@ -30,9 +30,10 @@ resource "aws_instance" "httpd_server" {
     delete_on_termination = "true"
   }
 
-  tags = {
-    Name = "ar-httpd-${var.general.key_name}-${var.general.attack_range_name}"
-  }
+  tags = merge({ Name = "ar-httpd-${var.general.key_name}-${var.general.attack_range_name}" },
+    var.tags
+  )
+
   provisioner "remote-exec" {
     inline = ["echo booted"]
 

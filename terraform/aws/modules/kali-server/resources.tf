@@ -20,8 +20,8 @@ resource "aws_instance" "kali_machine" {
   ami                         = data.aws_ami.latest-kali-linux[count.index].id
   instance_type               = "t3.large"
   key_name                    = var.general.key_name
-  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.subnet_1 : var.ec2_subnet_id
-  vpc_security_group_ids      = [var.vpc_security_group_ids]
+  subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_1 : var.ec2_subnet_id
+  vpc_security_group_ids      = var.vpc_security_group_ids
   private_ip                  = var.kali_server.kali_server_ip
   associate_public_ip_address = var.aws.use_public_ips
 

@@ -28,7 +28,7 @@ resource "aws_instance" "phantom-server" {
   instance_type               = "t3.xlarge"
   key_name                    = var.general.key_name
   subnet_id                   = var.ec2_subnet_id
-  vpc_security_group_ids      = [var.vpc_security_group_ids]
+  vpc_security_group_ids      = var.vpc_security_group_ids
   private_ip                  = var.phantom_server.phantom_server_ip
   iam_instance_profile        = var.phantom_server.instance_profile_name
   associate_public_ip_address = var.aws.use_public_ips

@@ -6,7 +6,7 @@ variable "general" {
     attack_range_password = "Pl3ase-k1Ll-me:p"
     key_name              = "attack-range-key-pair"
     attack_range_name     = "ar"
-    ip_whitelist          = "0.0.0.0/0"
+    ip_allow_list         = "0.0.0.0/0"
   }
 }
 
@@ -84,7 +84,7 @@ variable "nginx_server" {
   default = {
     nginx_server      = "0"
     image             = "nginx-web-proxy-v2-0-0"
-    proxy_server_ip   = "10.64.16.10"
+    proxy_server_ip   = "10.0.1.10"
     proxy_server_port = "8000"
   }
 }
