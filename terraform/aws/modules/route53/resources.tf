@@ -18,12 +18,27 @@ data "aws_route53_zone" "private" {
   private_zone = true
 }
 
-resource "aws_route53_record" "cname" {
+resource "aws_route53_record" "alb_cname" {
   zone_id = data.aws_route53_zone.private.zone_id
   name    = var.general.domain
   type    = "CNAME"
   ttl     = 300
-  records = [var.alb_name]
+  records = [var.alb_dns_name]
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      records
+    ]
+  }
+}
+
+resource "aws_route53_record" "nlb_cname" {
+  zone_id = data.aws_route53_zone.private.zone_id
+  name    = var.general.edge_domain
+  type    = "CNAME"
+  ttl     = 300
+  records = [var.nlb_dns_name]
 
   lifecycle {
     create_before_destroy = true

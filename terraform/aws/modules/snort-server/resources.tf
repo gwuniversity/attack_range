@@ -32,9 +32,11 @@ resource "aws_instance" "snort_sensor" {
     delete_on_termination = "true"
   }
 
-  tags = {
+  tags = merge({
     Name = "ar-snort-${var.general.key_name}-${var.general.attack_range_name}"
-  }
+    },
+    var.tags
+  )
 
   provisioner "remote-exec" {
     inline = ["echo booted"]
@@ -55,6 +57,7 @@ resource "aws_instance" "snort_sensor" {
         "ansible_python_interpreter": "/usr/bin/python3",
         "general": ${jsonencode(var.general)},
         "splunk_server": ${jsonencode(var.splunk_server)},
+        "edge_processor": ${jsonencode(var.edge_processor)},
         "snort_server": ${jsonencode(var.snort_server)},
       }
       EOF

@@ -20,6 +20,7 @@ module "splunk-server" {
   snort_server           = var.snort_server
   role_arn               = aws_iam_role.s3_access.arn
   instance_profile_name  = aws_iam_instance_profile.s3_access.name
+  tags                   = local.tags
 }
 
 module "phantom-server" {
@@ -43,9 +44,10 @@ module "windows-server" {
   simulation             = var.simulation
   zeek_server            = var.zeek_server
   snort_server           = var.snort_server
+  edge_processor         = var.edge_processor
   splunk_server          = var.splunk_server
   instance_profile_name  = aws_iam_instance_profile.s3_access.name
-
+  tags                   = local.tags
 }
 
 module "linux-server" {
@@ -60,10 +62,12 @@ module "linux-server" {
   aws                   = var.aws
   zeek_server           = var.zeek_server
   snort_server          = var.snort_server
+  edge_processor        = var.edge_processor
   linux_servers         = var.linux_servers
   simulation            = var.simulation
   splunk_server         = var.splunk_server
   instance_profile_name = aws_iam_instance_profile.s3_access.name
+  tags                  = local.tags
 }
 
 module "kali-server" {
@@ -73,6 +77,7 @@ module "kali-server" {
   general                = var.general
   kali_server            = var.kali_server
   aws                    = var.aws
+  tags                   = local.tags
 }
 
 module "nginx-server" {
@@ -92,12 +97,14 @@ module "zeek-server" {
   general                  = var.general
   aws                      = var.aws
   zeek_server              = var.zeek_server
+  edge_processor           = var.edge_processor
   windows_servers          = var.windows_servers
   windows_server_instances = module.windows-server.windows_servers
   linux_servers            = var.linux_servers
   linux_server_instances   = module.linux-server.linux_servers
   splunk_server            = var.splunk_server
   apache_server_instance   = module.apache_httpd.httpd_server
+  tags                     = local.tags
 }
 
 module "snort-server" {
@@ -107,12 +114,14 @@ module "snort-server" {
   general                  = var.general
   aws                      = var.aws
   snort_server             = var.snort_server
+  edge_processor           = var.edge_processor
   windows_servers          = var.windows_servers
   windows_server_instances = module.windows-server.windows_servers
   linux_servers            = var.linux_servers
   linux_server_instances   = module.linux-server.linux_servers
   splunk_server            = var.splunk_server
   apache_server_instance   = module.apache_httpd.httpd_server
+  tags                     = local.tags
 }
 
 module "nlb_security_group" {
@@ -158,6 +167,7 @@ module "apache_httpd" {
   aws                    = var.aws
   httpd_server           = var.httpd_server
   splunk_server          = var.splunk_server
+  edge_processor         = var.edge_processor
   elb_security_group_id  = module.elb_security_group.id
   instance_profile_name  = aws_iam_instance_profile.s3_access.name
   tags                   = local.tags
@@ -174,10 +184,11 @@ module "application_load_balancer" {
 }
 
 module "route53" {
-  source   = "./modules/route53"
-  aws      = var.aws
-  general  = var.general
-  alb_name = module.application_load_balancer.dns_name
+  source       = "./modules/route53"
+  aws          = var.aws
+  general      = var.general
+  alb_dns_name = module.application_load_balancer.dns_name
+  nlb_dns_name = module.network_load_balancer.dns_name
 }
 
 

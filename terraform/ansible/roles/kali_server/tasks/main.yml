@@ -1,0 +1,26 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Perform full system upgrade
+  apt:
+    upgrade: full
+    force_apt_get: yes
+
+- name: Install required packages
+  apt:
+    name:
+      - locales
+      - whiptail
+      - wapiti
+      - nikto
+      - netcat-openbsd
+      - burpsuite
+      - zaproxy
+      - p0f
+      - nmap
+      - fierce
+      - ncat
+      - sqlmap
+      - wafw00f
+    state: present

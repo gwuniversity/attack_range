@@ -35,7 +35,7 @@
 
 - name: Creating a windows domain
   win_domain:
-    dns_domain_name: "attackrange.local"
+    dns_domain_name: "attackrange.internal"
     safe_mode_password: "{{ general.attack_range_password }}"
 
 - name: Setting DNS Servers
@@ -49,8 +49,8 @@
 
 - name: Managing Domain Controller Membership
   win_domain_controller:
-    dns_domain_name: "attackrange.local"
-    domain_admin_user: "{{ ansible_user }}@attackrange.local"
+    dns_domain_name: "attackrange.internal"
+    domain_admin_user: "{{ ansible_user }}@attackrange.internal"
     domain_admin_password: "{{ general.attack_range_password }}"
     safe_mode_password: "{{ general.attack_range_password }}"
     state: "domain_controller"
@@ -60,7 +60,7 @@
 #   win_audit_policy_system:
 #     subcategory: Kerberos Authentication Service
 #     audit_type: success, failure
- 
+
 # - name: Enable Windows Security Logging "Account Logon"
 #   win_audit_policy_system:
 #     subcategory: Kerberos Service Ticket Operations

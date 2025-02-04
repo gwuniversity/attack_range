@@ -47,7 +47,7 @@ resource "aws_lb" "main_elb" {
 
   access_logs {
     bucket  = var.httpd_server.elb_bucket == null ? aws_s3_bucket.elb[count.index].id : var.httpd_server.elb_bucket
-    prefix  = "${data.aws_caller_identity.current.id}/elb-ar-elb-www-${var.general.attack_range_name}"
+    prefix  = "${data.aws_caller_identity.current.id}/ar-elb-www-${var.general.attack_range_name}"
     enabled = true
   }
 

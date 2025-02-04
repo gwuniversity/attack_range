@@ -12,3 +12,4 @@ variable "zeek_server" {}
 variable "instance_profile_name" {}
 variable "role_arn" {}
 variable "snort_server" {}
+variable "tags" {}

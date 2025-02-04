@@ -1,0 +1,26 @@
+- name: Change DNS resolver from local stub listener to external DNS resolver
+  block:
+    - name: Create symlink for resolv.conf
+      file:
+        src: /run/systemd/resolve/resolv.conf
+        dest: /etc/resolv.conf
+        state: link
+        force: yes
+
+    - name: Backup original resolved.conf
+      copy:
+        src: /etc/systemd/resolved.conf
+        dest: /etc/systemd/resolved.conf.org
+        remote_src: yes
+
+    - name: Disable DNS stub listener
+      lineinfile:
+        path: /etc/systemd/resolved.conf
+        regexp: '^#DNSStubListener=yes'
+        line: 'DNSStubListener=no'
+
+    - name: Restart systemd-resolved service
+      systemd:
+        name: systemd-resolved
+        state: restarted
+  become: yes

@@ -370,8 +370,8 @@ edge_processor:
   # Specify the image used for Splunk Edge.
 
 httpd_server:
-  domain: "www.attackrange.local"
-  dns_zone: "attackrange.local"
+  domain: "www.attackrange.internal"
+  dns_zone: "attackrange.internal"
   cert_name: ""
   httpd_server: "0"
   # Enable HTTPD Server by setting this to 1.

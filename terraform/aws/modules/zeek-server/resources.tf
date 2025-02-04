@@ -17,9 +17,8 @@ data "aws_ami" "zeek_server" {
 }
 
 resource "aws_instance" "zeek_sensor" {
-  count = var.zeek_server.zeek_server == "1" ? 1 : 0
-  # ami                         = data.aws_ami.zeek_server[0].id
-  ami                         = "ami-0ebc36e88d9d369a0"
+  count                       = var.zeek_server.zeek_server == "1" ? 1 : 0
+  ami                         = data.aws_ami.zeek_server[0].id
   instance_type               = "m5.2xlarge"
   key_name                    = var.general.key_name
   subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_1 : var.ec2_subnet_id
@@ -27,9 +26,11 @@ resource "aws_instance" "zeek_sensor" {
   private_ip                  = var.zeek_server.zeek_server_ip
   associate_public_ip_address = var.aws.use_public_ips
 
-  tags = {
+  tags = merge({
     Name = "ar-zeek-${var.general.key_name}-${var.general.attack_range_name}"
-  }
+    },
+    var.tags
+  )
 
   provisioner "remote-exec" {
     inline = ["echo booted"]
@@ -50,6 +51,7 @@ resource "aws_instance" "zeek_sensor" {
         "ansible_python_interpreter": "/usr/bin/python3",
         "general": ${jsonencode(var.general)},
         "splunk_server": ${jsonencode(var.splunk_server)},
+        "edge_processor": ${jsonencode(var.edge_processor)},
       }
       EOF
     EOT

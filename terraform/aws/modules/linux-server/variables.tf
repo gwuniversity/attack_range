@@ -9,3 +9,5 @@ variable "zeek_server" {}
 variable "snort_server" {}
 variable "splunk_server" {}
 variable "instance_profile_name" {}
+variable "edge_processor" {}
+variable "tags" {}

@@ -8,3 +8,5 @@ variable "splunk_server" {}
 variable "simulation" {}
 variable "instance_profile_name" {}
 variable "snort_server" {}
+variable "edge_processor" {}
+variable "tags" {}

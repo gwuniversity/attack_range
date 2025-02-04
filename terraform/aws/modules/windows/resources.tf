@@ -28,9 +28,11 @@ resource "aws_instance" "windows_server" {
   iam_instance_profile        = var.instance_profile_name
   associate_public_ip_address = var.aws.use_public_ips
 
-  tags = {
+  tags = merge({
     Name = "ar-win-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
-  }
+    },
+    var.tags
+  )
 
   user_data = <<EOF
 <powershell>
@@ -90,6 +92,7 @@ EOF
         "general": ${jsonencode(var.general)},
         "aws": ${jsonencode(var.aws)},
         "splunk_server": ${jsonencode(var.splunk_server)},
+        "edge_processor": ${jsonencode(var.edge_processor)},
         "simulation": ${jsonencode(var.simulation)},
         "windows_servers": ${jsonencode(var.windows_servers[count.index])},
       }

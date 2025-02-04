@@ -33,9 +33,11 @@ resource "aws_instance" "linux_server" {
     delete_on_termination = "true"
   }
 
-  tags = {
+  tags = merge({
     Name = "ar-linux-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
-  }
+    },
+    var.tags
+  )
 
   provisioner "remote-exec" {
     inline = ["echo booted"]
@@ -57,6 +59,7 @@ resource "aws_instance" "linux_server" {
         "general": ${jsonencode(var.general)},
         "aws": ${jsonencode(var.aws)},
         "splunk_server": ${jsonencode(var.splunk_server)},
+        "edge_processor": ${jsonencode(var.edge_processor)},
         "linux_servers": ${jsonencode(var.linux_servers[count.index])},
         "simulation": ${jsonencode(var.simulation)},
       }

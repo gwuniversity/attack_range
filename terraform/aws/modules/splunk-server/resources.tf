@@ -90,9 +90,11 @@ resource "aws_instance" "splunk-server" {
     delete_on_termination = "true"
   }
 
-  tags = {
+  tags = merge({
     Name = "ar-splunk-${var.general.key_name}-${var.general.attack_range_name}"
-  }
+    },
+    var.tags
+  )
 
   provisioner "remote-exec" {
     inline = ["echo booted"]

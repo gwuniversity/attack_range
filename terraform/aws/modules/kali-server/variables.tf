@@ -4,3 +4,4 @@ variable "ec2_subnet_id" {}
 variable "general" {}
 variable "kali_server" {}
 variable "aws" {}
+variable "tags" {}

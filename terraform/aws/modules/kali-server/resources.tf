@@ -25,9 +25,11 @@ resource "aws_instance" "kali_machine" {
   private_ip                  = var.kali_server.kali_server_ip
   associate_public_ip_address = var.aws.use_public_ips
 
-  tags = {
+  tags = merge({
     Name = "ar-kali-${var.general.key_name}-${var.general.attack_range_name}"
-  }
+    },
+    var.tags
+  )
 
   root_block_device {
     volume_type           = "gp3"
@@ -46,6 +48,24 @@ resource "aws_instance" "kali_machine" {
     }
   }
 
+  provisioner "local-exec" {
+    working_dir = "../ansible"
+    command     = <<-EOT
+      cat <<EOF > vars/kali_vars.json
+      {
+        "ansible_python_interpreter": "/usr/bin/python3",
+        "general": ${jsonencode(var.general)},
+        "aws": ${jsonencode(var.aws)},
+        "kali_server": ${jsonencode(var.kali_server)},
+      }
+      EOF
+    EOT
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../ansible"
+    command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u kali --private-key ${var.aws.private_key_path} -i '${self.private_ip},' kali_server.yml -e @vars/kali_vars.json"
+  }
 }
 
 resource "aws_eip" "kali_ip" {

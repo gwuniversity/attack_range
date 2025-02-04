@@ -54,7 +54,8 @@ resource "aws_instance" "httpd_server" {
         "general": ${jsonencode(var.general)},
         "aws": ${jsonencode(var.aws)},
         "splunk_server": ${jsonencode(var.splunk_server)},
-        "httpd_server": ${jsonencode(var.httpd_server)},
+        "edge_processor": ${jsonencode(var.edge_processor)},
+        "httpd_server": ${jsonencode(var.httpd_server)}
       }
       EOF
     EOT

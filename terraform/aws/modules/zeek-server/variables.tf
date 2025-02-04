@@ -9,4 +9,5 @@ variable "linux_servers" {}
 variable "linux_server_instances" {}
 variable "splunk_server" {}
 variable "apache_server_instance" {}
-
+variable "edge_processor" {}
+variable "tags" {}

@@ -26,21 +26,29 @@ def get_all_instances(key_name, ar_name, region):
     for reservation in response['Reservations']:
         for instance in reservation['Instances']:
             if instance['State']['Name']!='terminated':
-                if len(instance['Tags']) > 0:
-                    tag_value = instance['Tags'][0]['Value']
-                    if tag_value.startswith('ar-'):
-                        if (key_name in tag_value) and (ar_name in tag_value):
-                            instances.append(instance)
+                # Find the Name tag
+                name_tag_value = None
+                for tag in instance['Tags']:
+                    if tag['Key'] == 'Name':
+                        name_tag_value = tag['Value']
+                        break
+
+                if name_tag_value and name_tag_value.startswith('ar-'):
+                    if (key_name in name_tag_value) and (ar_name in name_tag_value):
+                        instances.append(instance)
 
     return instances
+
 
 
 def get_instance_by_name(ec2_name, key_name, ar_name, region):
     instances = get_all_instances(key_name, ar_name, region)
     for instance in instances:
-        str = instance['Tags'][0]['Value']
-        if str == ec2_name:
-            return instance
+        # Look for the Name tag specifically
+        for tag in instance['Tags']:
+            if tag['Key'] == 'Name' and tag['Value'] == ec2_name:
+                return instance
+    return None
 
 def get_instances_by_ids(instance_ids, ec2_name, key_name, ar_name, region):
     instances = get_all_instances(key_name, ar_name, region)

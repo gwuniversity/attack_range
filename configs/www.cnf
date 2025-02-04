@@ -1,0 +1,39 @@
+[ req ]
+default_bits        = 2048
+default_keyfile     = attackrange.key
+distinguished_name  = subject
+req_extensions      = req_ext
+x509_extensions     = x509_ext
+string_mask         = utf8only
+prompt              = no
+
+[ subject ]
+countryName         = US
+stateOrProvinceName = WASHINGTON
+localityName        = District of Columbia
+organizationName    = InfoSec - CTI-DE - PurpleTeam
+commonName          = www.attackrange.internal
+emailAddress        = admin@attackrange.internal
+
+# Section x509_ext is used when generating a self-signed certificate.
+[ x509_ext ]
+subjectKeyIdentifier    = hash
+authorityKeyIdentifier  = keyid,issuer
+basicConstraints        = CA:FALSE
+keyUsage                = digitalSignature, keyEncipherment
+subjectAltName          = @alternate_names
+nsComment               = "OpenSSL Generated Certificate"
+extendedKeyUsage        = serverAuth, clientAuth
+
+# Section req_ext is used when generating a certificate signing request.
+[ req_ext ]
+subjectKeyIdentifier = hash
+basicConstraints     = CA:FALSE
+keyUsage             = digitalSignature, keyEncipherment
+subjectAltName       = @alternate_names
+nsComment            = "OpenSSL Generated Certificate"
+extendedKeyUsage     = serverAuth, clientAuth
+
+[ alternate_names ]
+DNS.1 = www.attackrange.internal
+DNS.2 = *.www.attackrange.internal

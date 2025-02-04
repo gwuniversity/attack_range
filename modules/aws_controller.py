@@ -195,15 +195,23 @@ class AwsController(AttackRangeController):
                     public_ip = None
                 private_ip = instance['NetworkInterfaces'][0]['PrivateIpAddress']
                 ip_address = public_ip if public_ip else private_ip
-                response.append(
-                    [
-                        instance["Tags"][0]["Value"],
-                        instance["State"]["Name"],
-                        ip_address,
-                        instance["InstanceId"],
-                    ]
-                )
-                instance_name = instance["Tags"][0]["Value"]
+                # Get the Name tag value
+                instance_name = None
+                for tag in instance['Tags']:
+                    if tag['Key'] == 'Name':
+                        instance_name = tag['Value']
+                        break
+
+                if instance_name:
+                    response.append(
+                        [
+                            instance_name,
+                            instance["State"]["Name"],
+                            ip_address,
+                            instance["InstanceId"],
+                        ]
+                    )
+
                 if instance_name.startswith("ar-splunk"):
                     splunk_ip = ip_address
                     messages.append(
@@ -317,7 +325,7 @@ class AwsController(AttackRangeController):
                     )
             else:
                 response.append(
-                    [instance["Tags"][0]["Value"], instance["State"]["Name"]]
+                    [instance_name, instance["State"]["Name"]]
                 )
 
         print()

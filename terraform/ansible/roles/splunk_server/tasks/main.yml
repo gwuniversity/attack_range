@@ -28,3 +28,6 @@
 - include_tasks: configure_props.yml
 - include_tasks: configure_cim.yml
 - include_tasks: configure_phantom.yml
+
+# - include_tasks: configure_outputs.yml
+#   when: splunk_server.splunk_cloud is true
