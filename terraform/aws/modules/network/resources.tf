@@ -71,15 +71,8 @@ resource "aws_security_group" "allow_list" {
   }
 
   ingress {
-    from_port   = 9997
-    to_port     = 9997
-    protocol    = "tcp"
-    cidr_blocks = split(",", var.general.ip_allow_list)
-  }
-
-  ingress {
-    from_port   = 8089
-    to_port     = 8089
+    from_port   = 3389
+    to_port     = 3389
     protocol    = "tcp"
     cidr_blocks = split(",", var.general.ip_allow_list)
   }
