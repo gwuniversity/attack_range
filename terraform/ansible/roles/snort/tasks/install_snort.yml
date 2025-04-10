@@ -38,6 +38,8 @@
       - build-essential
       - libpcap-dev
       - libpcre3-dev
+      # Add PCRE2 library
+      - libpcre2-dev
       - libnet1-dev
       - zlib1g-dev
       - luajit
