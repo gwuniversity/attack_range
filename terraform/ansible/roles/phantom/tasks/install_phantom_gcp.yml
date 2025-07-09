@@ -1,0 +1,45 @@
+---
+# Install Phantom from RPM on a fresh cloud-user 8 instance
+
+- name: Update all packages
+  become: yes
+  become_user: root
+  yum:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: Copy Splunk SOAR to server
+  become: yes
+  become_user: root
+  unarchive:
+    src: "../../apps/{{ phantom_server.phantom_app }}"
+    dest: /home/root
+
+- name: Creates directory
+  become: yes
+  become_user: root
+  file:
+    path: /opt/soar
+    state: directory
+
+- name: prepare phantom install script without apps
+  become: yes
+  command: /home/root/splunk-soar/soar-prepare-system --splunk-soar-home /opt/soar --no-prompt 
+
+- name: copy splunk soar folder
+  become: yes
+  become_user: root
+  command: cp -r /home/root/splunk-soar /home/phantom/splunk-soar
+
+- name: chown splunk soar folder
+  become: yes
+  become_user: root
+  command: chown -R phantom:phantom /home/phantom/splunk-soar
+
+- name: run the phantom install script 
+  become: yes
+  become_user: phantom
+  command: ./soar-install --splunk-soar-home /opt/soar --no-prompt --ignore-warnings
+  args:
+    chdir: /home/phantom/splunk-soar

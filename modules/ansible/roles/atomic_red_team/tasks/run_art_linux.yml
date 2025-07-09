@@ -3,6 +3,14 @@
 - set_fact:
     technique: "{{ item }}"
 
+- name: Start threat capture with CAP Attack
+  become: true
+  shell: |
+    pwsh -Command 'Import-Module "/root/capattack/capattack-ps/capattack.psd1" -Force;
+    CapAttack-Start'
+  when: cap_attack == "1"
+  ignore_errors: True
+
 - name: Run Atomic Red Team
   become: true
   shell: |
@@ -10,6 +18,20 @@
     Invoke-AtomicTest "{{ technique }}";
     Invoke-AtomicTest "{{ technique }}" -Cleanup'
   register: output_art
+
+- name: Stop threat capture with CAP Attack and upload
+  become: true
+  shell: |
+    pwsh -Command 'Import-Module "/root/capattack/capattack-ps/capattack.psd1" -Force;
+    CapAttack-Stop -Headless -Upload'
+  when: cap_attack == "1" and cap_attack_upload_threat_capture == "1"
+
+- name: Stop threat capture with CAP Attack
+  become: true
+  shell: |
+    pwsh -Command 'Import-Module "/root/capattack/capattack-ps/capattack.psd1" -Force;
+    CapAttack-Stop -Headless'
+  when: cap_attack == "1" and cap_attack_upload_threat_capture == "0"
 
 - debug:
     var: output_art.stdout_lines

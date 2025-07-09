@@ -1,20 +1,19 @@
 ---
-# Install Phantom from RPM on a fresh CentOS 7 instance
 
-- name: Change mirror to vault.centos.org
-  shell: sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
-  become: True
+# - name: Change mirror to vault.centos.org
+#   shell: sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
+#   become: yes
 
-- name: Uncomment baseurl lines
-  shell: sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
-  become: True
+# - name: Uncomment baseurl lines
+#   shell: sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
+#   become: yes
 
-- name: Comment out mirrorlist lines
-  shell: sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
-  become: True
+# - name: Comment out mirrorlist lines
+#   shell: sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+#   become: yes
 
 - name: Update all packages
-  become: True
+  become: yes
   become_user: root
   yum:
     name: "*"
@@ -22,7 +21,7 @@
     update_cache: yes
 
 - name: Copy Splunk SOAR to server
-  become: True
+  become: yes
   become_user: root
   unarchive:
     src: "../../apps/{{ phantom_server.phantom_app }}"
@@ -31,7 +30,7 @@
     group: ec2-user
 
 - name: Creates directory
-  become: True
+  become: yes
   become_user: root
   file:
     path: /opt/soar
@@ -40,21 +39,21 @@
     group: ec2-user
 
 - name: prepare phantom install script without apps
-  become: True
-  command: /home/ec2-user/splunk-soar/soar-prepare-system --splunk-soar-home /opt/soar --no-prompt
+  become: yes
+  command: /home/ec2-user/splunk-soar/soar-prepare-system --splunk-soar-home /opt/soar --no-prompt 
 
 - name: copy splunk soar folder
-  become: True
+  become: yes
   become_user: root
   command: cp -r /home/ec2-user/splunk-soar /home/phantom/splunk-soar
 
 - name: chown splunk soar folder
-  become: True
+  become: yes
   become_user: root
   command: chown -R phantom:phantom /home/phantom/splunk-soar
 
-- name: run the phantom install script
-  become: True
+- name: run the phantom install script 
+  become: yes
   become_user: phantom
   command: ./soar-install --splunk-soar-home /opt/soar --no-prompt --ignore-warnings
   args:

@@ -12,7 +12,7 @@ from modules import azure_service, splunk_sdk
 from modules.attack_range_controller import AttackRangeController
 from modules.art_simulation_controller import ArtSimulationController
 from modules.purplesharp_simulation_controller import PurplesharpSimulationController
-
+from pathlib import Path
 
 class AzureController(AttackRangeController):
 
@@ -129,6 +129,110 @@ class AzureController(AttackRangeController):
             simulation_controller = PurplesharpSimulationController(self.config)
             simulation_controller.simulate(target, technique, playbook)
 
+    def start_cap_attack(self, target: str) -> None:
+        self.logger.info("[action] > start_cap_attack\n")
+        target_public_ip = azure_service.get_instance(
+            target,
+            self.config["general"]["key_name"],
+            self.config["general"]["attack_range_name"],
+        )["public_ip"]
+        private_key_path = self.config["azure"]["private_key_path"]
+
+        if "win" in target:
+            ansible_user = "AzureAdmin"
+            ansible_port = 5986
+            cmd_line = str("-i " + target_public_ip + ", ")
+            extravars = {
+                "ansible_port": ansible_port,
+                "ansible_connection": "winrm",
+                "ansible_winrm_server_cert_validation": "ignore",
+                "ansible_user": ansible_user,
+                "ansible_password": self.config["general"]["attack_range_password"],
+                "cap_attack_action": "start",
+            }
+        else:
+            ansible_user = "ubuntu"
+            ansible_port = 22
+            cmd_line = (
+                "-u "
+                + ansible_user
+                + " --private-key "
+                + private_key_path
+                + " -i "
+                + target_public_ip
+                + ", "
+            )
+            extravars = {
+                "ansible_port": ansible_port,
+                "ansible_connection": "ssh",
+                "ansible_user": ansible_user,
+                "cap_attack_action": "start",
+            }
+
+        ansible_runner.run(
+            private_data_dir=os.path.join(os.path.dirname(__file__), "../"),
+            cmdline=cmd_line,
+            roles_path=os.path.join(os.path.dirname(__file__), "ansible/roles"),
+            playbook=os.path.join(os.path.dirname(__file__), "ansible/cap_attack.yml"),
+            extravars=extravars,
+            verbosity=0,
+        )
+
+    def stop_cap_attack(self, target: str) -> None:
+        self.logger.info("[action] > stop_cap_attack\n")
+        target_public_ip = azure_service.get_instance(
+            target,
+            self.config["general"]["key_name"],
+            self.config["general"]["attack_range_name"],
+        )["public_ip"]
+        private_key_path = self.config["azure"]["private_key_path"]
+
+        if "win" in target:
+            ansible_user = "AzureAdmin"
+            ansible_port = 5986
+            cmd_line = str("-i " + target_public_ip + ", ")
+            extravars = {
+                "ansible_port": ansible_port,
+                "ansible_connection": "winrm",
+                "ansible_winrm_server_cert_validation": "ignore",
+                "ansible_user": ansible_user,
+                "ansible_password": self.config["general"]["attack_range_password"],
+                "cap_attack_action": "stop",
+                "cap_attack_upload_threat_capture": self.config["simulation"][
+                    "cap_attack_upload_threat_capture"
+                ],
+            }
+        else:
+            ansible_user = "ubuntu"
+            ansible_port = 22
+            cmd_line = (
+                "-u "
+                + ansible_user
+                + " --private-key "
+                + private_key_path
+                + " -i "
+                + target_public_ip
+                + ", "
+            )
+            extravars = {
+                "ansible_port": ansible_port,
+                "ansible_connection": "ssh",
+                "ansible_user": ansible_user,
+                "cap_attack_action": "stop",
+                "cap_attack_upload_threat_capture": self.config["simulation"][
+                    "cap_attack_upload_threat_capture"
+                ],
+            }
+
+        ansible_runner.run(
+            private_data_dir=os.path.join(os.path.dirname(__file__), "../"),
+            cmdline=cmd_line,
+            roles_path=os.path.join(os.path.dirname(__file__), "ansible/roles"),
+            playbook=os.path.join(os.path.dirname(__file__), "ansible/cap_attack.yml"),
+            extravars=extravars,
+            verbosity=0,
+        )
+
     def show(self) -> None:
         self.logger.info("[action] > show\n")
         instances = azure_service.get_all_instances(
@@ -138,7 +242,6 @@ class AzureController(AttackRangeController):
         response = []
         messages = []
         instances_running = False
-        splunk_ip = ""
         for instance in instances:
             if (
                 instance["vm_obj"].instance_view.statuses[1].display_status
@@ -154,10 +257,10 @@ class AzureController(AttackRangeController):
                 )
                 instance_name = instance["vm_obj"].name
                 if instance_name.startswith("ar-splunk"):
-                    splunk_ip = instance["public_ip"]
+                    ip_address = instance["public_ip"]
                     messages.append(
                         "\nAccess Guacamole via:\n\tWeb > http://"
-                        + instance["public_ip"]
+                        + ip_address
                         + ":8080/guacamole"
                         + "\n\tusername: Admin \n\tpassword: "
                         + self.config["general"]["attack_range_password"]
@@ -165,41 +268,41 @@ class AzureController(AttackRangeController):
                     if self.config["splunk_server"]["install_es"] == "1":
                         messages.append(
                             "\n\nAccess Splunk via:\n\tWeb > https://"
-                            + instance["public_ip"]
+                            + ip_address
                             + ":8000\n\tSSH > ssh -i"
                             + self.config["azure"]["private_key_path"]
                             + " ubuntu@"
-                            + instance["public_ip"]
+                            + ip_address
                             + "\n\tusername: admin \n\tpassword: "
                             + self.config["general"]["attack_range_password"]
                         )
                     else:
                         messages.append(
                             "\n\nAccess Splunk via:\n\tWeb > http://"
-                            + instance["public_ip"]
+                            + ip_address
                             + ":8000\n\tSSH > ssh -i"
                             + self.config["azure"]["private_key_path"]
                             + " ubuntu@"
-                            + instance["public_ip"]
+                            + ip_address
                             + "\n\tusername: admin \n\tpassword: "
                             + self.config["general"]["attack_range_password"]
                         )
                 elif instance_name.startswith("ar-phantom"):
                     messages.append(
                         "\nAccess Phantom via:\n\tWeb > https://"
-                        + instance["public_ip"]
+                        + ip_address
                         + ":8443"
                         + "\n\tSSH > ssh -i"
                         + self.config["azure"]["private_key_path"]
                         + " centos@"
-                        + instance["public_ip"]
+                        + ip_address
                         + "\n\tusername: soar_local_admin \n\tpassword: "
                         + self.config["general"]["attack_range_password"]
                     )
                 elif instance_name.startswith("ar-win"):
                     messages.append(
                         "\nAccess Windows via:\n\tRDP > rdp://"
-                        + instance["public_ip"]
+                        + ip_address
                         + ":3389\n\tusername: AzureAdmin \n\tpassword: "
                         + self.config["general"]["attack_range_password"]
                     )
@@ -208,7 +311,7 @@ class AzureController(AttackRangeController):
                         "\nAccess Linux via:\n\tSSH > ssh -i"
                         + self.config["azure"]["private_key_path"]
                         + " ubuntu@"
-                        + instance["public_ip"]
+                        + ip_address
                         + "\n\tusername: ubuntu \n\tpassword: "
                         + self.config["general"]["attack_range_password"]
                     )
@@ -217,7 +320,7 @@ class AzureController(AttackRangeController):
                         "\nAccess Kali via:\n\tSSH > ssh -i"
                         + self.config["azure"]["private_key_path"]
                         + " kali@"
-                        + instance["public_ip"]
+                        + ip_address
                         + "\n\tusername: kali \n\tpassword: "
                         + self.config["general"]["attack_range_password"]
                     )
@@ -226,7 +329,7 @@ class AzureController(AttackRangeController):
                         "\nAccess Nginx Web Proxy via:\n\tSSH > ssh -i"
                         + self.config["azure"]["private_key_path"]
                         + " ubuntu@"
-                        + instance["public_ip"]
+                        + ip_address
                         + "\n\tusername: kali \n\tpassword: "
                         + self.config["general"]["attack_range_password"]
                     )
@@ -287,6 +390,10 @@ class AzureController(AttackRangeController):
         self.logger.info("[Completed]")
 
     def replay(self, file_name, index, sourcetype, source) -> None:
+        ### check if input log file is afile path or just a file name
+        ### if file name ,assume it is in current working dir of attack_range.py
+        if Path(file_name).parent == Path("."):
+            file_name = str(Path("../..")/file_name)
         ansible_vars = {}
         ansible_vars["file_name"] = file_name
         ansible_vars["ansible_user"] = "ubuntu"
@@ -313,7 +420,7 @@ class AzureController(AttackRangeController):
             self.config["general"]["attack_range_name"],
         )["public_ip"]
         cmdline = "-i %s, -u %s" % (splunk_ip, ansible_vars["ansible_user"])
-        runner = ansible_runner.run(
+        ansible_runner.run(
             private_data_dir=os.path.join(os.path.dirname(__file__), "../"),
             cmdline=cmdline,
             roles_path=os.path.join(os.path.dirname(__file__), "ansible/roles"),

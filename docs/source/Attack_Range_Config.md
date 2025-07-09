@@ -32,11 +32,11 @@ general:
   crowdstrike_logs_access_key_id: ""
   crowdstrike_logs_secret_access_key: ""
   crowdstrike_logs_sqs_url: ""
-# All these fields are needed to automatically deploy a Crowdstrike Agent and ingest Crowdstrike Falcon logs into the Splunk Server.
-# See the chapter Crowdstrike Falcon in the docs page Attack Range Features.
+  # All these fields are needed to automatically deploy a CrowdStrike Agent and ingest CrowdStrike Falcon logs into the Splunk Server.
+  # See the chapter CrowdStrike Falcon in the docs page Attack Range Features.
 
   carbon_black_cloud: "0"
-  # Enable/Disable VMWare Carbon Black Cloud log forwarding to Splunkby setting this to 1 or 0.
+  # Enable/Disable VMWare Carbon Black Cloud log forwarding to Splunk by setting this to 1 or 0.
 
   carbon_black_cloud_company_code: ""
   carbon_black_cloud_s3_bucket: ""
@@ -177,7 +177,7 @@ phantom_server:
   # Enable/Disable Phantom Server
 
   phantom_app: "splunk_soar-unpriv-6.2.2.134-8f694086-el8-x86_64.tgz"
-  # name of the Splunk SOAR package located in apps folder.
+  # name of the Splunk SOAR package located in apps folder. 
   # aws: Make sure you use the RHEL 8 version which contains ....el8... in the file name
   # azure, local: Make sure you use the RHEL 7 version which contains ....el7... in the file name
 
@@ -195,8 +195,8 @@ windows_servers_default:
   # Define the hostname for the Windows Server.
 
   windows_image: "windows-server-2019"
-  # Name of the image of the Windows Server.
-  # allowd values: windows-server-2016, windows-server-2019, windows-server-2022
+  # Name of the image of the Windows Server. 
+  # allowed values: windows-server-2016, windows-server-2019, windows-server-2022
 
   create_domain: "0"
   # Create Domain will turn this Windows Server into a Domain Controller. Enable by setting this to 1.
@@ -283,14 +283,4 @@ simulation:
 
   atomic_red_team_branch: master
   # Specify the branch for Atomic Red Team.
-
-  prelude: "0"
-# Install Prelude by setting this to 1.
-
-  prelude_operator_url: "https://download.prelude.org/latest?arch=x64&platform=linux&variant=zip&edition=headless"
-# Specify where to download Prelude Operator from.
-
-  prelude_account_email: "test@test.com"
-# Email account login into a Prelude Operator UI.
-# Required for connecting to redirector, can be found on the GUI under connect -> deploy manual redirector -> accountEmail.
 ````

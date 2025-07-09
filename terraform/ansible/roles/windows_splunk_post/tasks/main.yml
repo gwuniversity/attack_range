@@ -2,9 +2,28 @@
 
 - name: Change Splunk password
   win_command: '"C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" edit user admin -password {{ general.attack_range_password }} -auth admin:Pl3ase-k1Ll-me:p'
+  register: result
+  retries: 3
+  delay: 10
+  until: result is success
 
 - name: Change Hostname
   win_command: '"C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" set default-hostname {{ windows_servers.hostname }} -auth admin:{{ general.attack_range_password }}'
+  register: result
+  retries: 3
+  delay: 10
+  until: result is success
+
+- name: Wait for Splunk to be ready
+  win_command: 'timeout /t 30'
+  register: result
+  retries: 3
+  delay: 10
+  until: result is success
 
 - name: Restart
   win_command: '"C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" restart'
+  register: result
+  retries: 3
+  delay: 10
+  until: result is success

@@ -92,3 +92,11 @@ variable "nginx_server" {
 variable "zeek_server" { }
 
 variable "snort_server" { }
+
+variable "caldera_server" {
+    type = map(string)
+
+    default = {
+        "caldera_server" = "0"
+    }
+}

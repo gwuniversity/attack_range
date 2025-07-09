@@ -66,6 +66,18 @@
     group: root
     mode: 0755
     force: yes
+  when: general.cloud_provider != "gcp"
+
+- name: install /etc/systemd/system/snort_gcp.service to set ens4 settings at boot
+  become: true
+  copy:
+    src: snort_gcp.service
+    dest: /etc/systemd/system/snort.service
+    owner: root
+    group: root
+    mode: 0755
+    force: yes
+  when: general.cloud_provider == "gcp"
 
 - name: systemctl daemon reload
   become: true

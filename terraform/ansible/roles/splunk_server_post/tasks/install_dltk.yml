@@ -1,7 +1,8 @@
 ---
+
 - name: download DLTK from S3 bucket
   get_url:
-    url: "{{ splunk_server.s3_bucket_url }}/splunk-app-for-data-science-and-deep-learning_390.tgz"
+    url: '{{ splunk_server.s3_bucket_url }}/splunk-app-for-data-science-and-deep-learning_390.tgz'
     dest: /tmp/splunk-app-for-data-science-and-deep-learning_390.tgz
 
 - name: Install DLTK via REST
@@ -14,7 +15,7 @@
     body: "name=/tmp/splunk-app-for-data-science-and-deep-learning_390.tgz&update=true&filename=true"
     headers:
       Content-Type: "application/x-www-form-urlencoded"
-    status_code: [200, 201]
+    status_code: [ 200, 201 ]
     timeout: 300
   notify: restart splunk
 
@@ -62,7 +63,7 @@
     name: splunk
     groups: docker
     append: yes
-  become: True
+  become: yes
 
 - name: Create folder directory for configuration
   file:

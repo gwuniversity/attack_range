@@ -57,3 +57,10 @@ class AttackRangeController(abc.ABC):
     @abc.abstractmethod
     def init_remote_backend(self, backend_name) -> None:
         pass
+    @abc.abstractmethod
+    def start_cap_attack(self, target: str) -> None:
+        pass
+
+    @abc.abstractmethod
+    def stop_cap_attack(self, target: str) -> None:
+        pass

@@ -5,5 +5,5 @@
 
 - name: restart splunk
   service: name=splunk state=restarted
-  become: True
+  become: yes
   when: general.crowdstrike_falcon == "1"

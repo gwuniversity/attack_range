@@ -1,6 +1,7 @@
 ---
+
 - name: Enable Windows Scriptblock Logging
-  ignore_errors: True
+  ignore_errors: yes
   win_regedit:
     key: "HKLM:\\Software\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging"
     value: EnableScriptBlockLogging
@@ -8,7 +9,7 @@
     data: 1
 
 - name: Enable Windows Scriptblock Logging
-  ignore_errors: True
+  ignore_errors: yes
   win_regedit:
     key: "HKLM:\\Software\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging"
     value: EnableScriptBlockInvocationLogging

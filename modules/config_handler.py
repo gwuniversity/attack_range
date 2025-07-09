@@ -22,6 +22,7 @@ class ConfigHandler:
             "general",
             "aws",
             "azure",
+            "gcp",
             "splunk_server",
             "phantom_server",
             "kali_server",
@@ -29,10 +30,8 @@ class ConfigHandler:
             "simulation",
             "zeek_server",
             "snort_server",
-            'httpd_server',
-            'edge_processor',
-            'waf'
-            ]
+            "caldera_server",
+        ]
 
         for parent_key in parent_keys:
             if parent_key in yml_dict:
@@ -127,20 +126,6 @@ class ConfigHandler:
             sys.exit(1)
 
         if (
-            config["edge_processor"]["edge_processor"] == "1"
-            and config["general"]["cloud_provider"] == "azure"
-        ):
-            print("ERROR: Splunk Edge Processor not supported in Azure.")
-            sys.exit(1)
-
-        if (
-            config["httpd_server"]["httpd_server"] == "1"
-            and config["general"]["cloud_provider"] == "azure"
-        ):
-            print("ERROR: Apache HTTPD server not supported in Azure.")
-            sys.exit(1)
-
-        if (
             config["general"]["carbon_black_cloud"] == "1"
             and config["general"]["cloud_provider"] == "azure"
         ):
@@ -165,4 +150,18 @@ class ConfigHandler:
             print(
                 "ERROR: You can not use a phantom server or bring your own phantom when you use a bring your own splunk."
             )
+            sys.exit(1)
+
+        if (
+            config["phantom_server"]["phantom_server"] == "1"
+            and config["general"]["cloud_provider"] == "gcp"
+        ):
+            print("ERROR: Phantom Server not supported in GCP.")
+            sys.exit(1)
+
+        if (
+            config["kali_server"]["kali_server"] == "1"
+            and config["general"]["cloud_provider"] == "gcp"
+        ):
+            print("ERROR: Kali Server not supported in GCP.")
             sys.exit(1)

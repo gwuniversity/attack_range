@@ -1,0 +1,42 @@
+---
+# Windows tasks
+- name: Start CAP Attack on Windows
+  win_shell: |
+    Import-Module "C:\Program Files\ansible\capattack\capattack-ps\capattack.psd1" -Force
+    CapAttack-Start 
+  when: cap_attack_action == "start" and ansible_os_family == "Windows"
+
+- name: Stop CAP Attack with upload on Windows
+  win_shell: |
+    Import-Module "C:\Program Files\ansible\capattack\capattack-ps\capattack.psd1" -Force
+    CapAttack-Stop -Headless -Upload 
+  when: cap_attack_action == "stop" and cap_attack_upload_threat_capture == "1" and ansible_os_family == "Windows"
+
+- name: Stop CAP Attack without upload on Windows
+  win_shell: |
+    Import-Module "C:\Program Files\ansible\capattack\capattack-ps\capattack.psd1" -Force
+    CapAttack-Stop -Headless 
+  when: cap_attack_action == "stop" and cap_attack_upload_threat_capture == "0" and ansible_os_family == "Windows"
+    
+# Linux tasks
+- name: Start CAP Attack on Linux
+  become: true
+  shell: |
+    pwsh -Command 'Import-Module "/root/capattack/capattack-ps/capattack.psd1" -Force;
+    CapAttack-Start'
+  when: cap_attack_action == "start" and (ansible_distribution == "Ubuntu" or ansible_distribution == "Debian" or ansible_os_family == "RedHat")
+  ignore_errors: True
+
+- name: Stop CAP Attack with upload on Linux
+  become: true
+  shell: |
+    pwsh -Command 'Import-Module "/root/capattack/capattack-ps/capattack.psd1" -Force;
+    CapAttack-Stop -Headless -Upload'
+  when: cap_attack_action == "stop" and cap_attack_upload_threat_capture == "1" and (ansible_distribution == "Ubuntu" or ansible_distribution == "Debian" or ansible_os_family == "RedHat")
+
+- name: Stop CAP Attack without upload on Linux
+  become: true
+  shell: |
+    pwsh -Command 'Import-Module "/root/capattack/capattack-ps/capattack.psd1" -Force;
+    CapAttack-Stop -Headless'
+  when: cap_attack_action == "stop" and cap_attack_upload_threat_capture == "0" and (ansible_distribution == "Ubuntu" or ansible_distribution == "Debian" or ansible_os_family == "RedHat") 

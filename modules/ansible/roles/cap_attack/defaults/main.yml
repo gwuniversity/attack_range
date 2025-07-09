@@ -1,0 +1,10 @@
+---
+# Default values for CAP Attack
+cap_attack_action: "start"              # Options: start, stop
+cap_attack_upload_threat_capture: "0"   # Options: 0 (don't upload), 1 (upload)
+
+# Windows-specific defaults
+windows_cap_attack_path: "C:\\Program Files\\ansible\\capattack"
+
+# Linux-specific defaults
+linux_cap_attack_path: "/root/capattack" 

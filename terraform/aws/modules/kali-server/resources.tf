@@ -5,8 +5,8 @@ data "aws_ami" "latest-kali-linux" {
   owners      = ["679593333241"] # owned by AWS marketplace
 
   filter {
-    name   = "name"
-    values = ["kali-last-snapshot-amd64-2023*"]
+      name   = "name"
+      values = ["kali-last-snapshot-amd64-*"]
   }
 
   filter {

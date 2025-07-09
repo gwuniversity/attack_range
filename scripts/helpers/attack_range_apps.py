@@ -63,6 +63,10 @@ ATTACK_RANGE_SPLUNKBASE_APPS = [
         "name": "VMware Carbon Black Cloud",
         "url": "https://splunkbase.splunk.com/app/5332",
     },
+    {
+        "name": "Splunk Add-on for Palo Alto Networks",
+        "url": "https://splunkbase.splunk.com/app/7523",
+    },
 ]
 
 ATTACK_RANGE_LOCAL_APPS = [

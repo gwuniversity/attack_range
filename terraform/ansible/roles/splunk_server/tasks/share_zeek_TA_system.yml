@@ -1,0 +1,7 @@
+---
+
+- name: copy local.meta to splunk server
+  copy:
+    src: local.meta
+    dest: /opt/splunk/etc/apps/Splunk_TA_zeek/metadata/local.meta
+  notify: restart splunk

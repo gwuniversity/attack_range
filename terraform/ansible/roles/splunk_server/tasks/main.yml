@@ -15,8 +15,8 @@
 
 - include_tasks: install_app_from_s3.yml
   with_items: "{{ splunk_apps_list }}"
-  when: splunk_server.s3_bucket_url is defined and splunk_server.s3_bucket_url.startswith('https')
 
+- include_tasks: share_zeek_TA_system.yml
 - include_tasks: configure_attack_range_dashboard.yml
 - include_tasks: configure_escu.yml
 - include_tasks: configure_props.yml
