@@ -21,7 +21,7 @@ resource "aws_instance" "caldera_server" {
   instance_type               = "m5.xlarge"
   key_name                    = var.general.key_name
   subnet_id                   = var.aws.use_public_ips == "1" ? var.ec2_subnet_id : var.aws.private_subnet_2
-  vpc_security_group_ids      = [var.vpc_security_group_ids]
+  vpc_security_group_ids      = var.vpc_security_group_ids
   private_ip                  = var.caldera_server.private_ip
   associate_public_ip_address = var.aws.use_public_ips
 
