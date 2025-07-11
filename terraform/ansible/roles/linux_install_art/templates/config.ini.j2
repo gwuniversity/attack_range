@@ -1,0 +1,56 @@
+[General]
+# supported options: attacker,victim
+machine_type=victim
+# Name displayed in SnapAttack (Optional)
+display_name=
+# Perform auto updates
+autoupdate=false
+# Capture without a user session
+headless=false
+
+[Logging]
+### ATTACKER/VICTIM OPTIONS ###
+# Records desktop with ffmpeg
+desktop=false
+
+# Windows capture device options: gdigrab,dshow
+# Note: Windows only
+ffmpeg_recorder=gdigrab
+
+# Records keystrokes
+keystrokes=false
+
+
+##### VICTIM ONLY OPTIONS #####
+# how to pull event logs from the system
+# supported options include: raw, xml (deprecated)
+# Note: windows only
+log_format=raw
+
+# clear event logs prior to session start
+# Note: windows only
+clear_event_logs=false
+
+# supported options include: sysmon, none
+edr=none
+
+# sysmon configuration to use; placed in same directory as this script
+# Note: Windows only
+sysmon_config=sysmon_snapattack.xml
+
+# Configures audit policy logs, such as 4688
+# Note: Windows only
+auditpol=false
+
+# configures PowerShell v5 module and script block logging
+# Note: Windows only
+powershell_module_scriptblock=false
+
+# Configures packet capture - Can use win10pcap or npcap
+# Note: windows only
+pcap=false
+pcap_driver=win10pcap
+
+# Configures snapattack api key
+snapattack_uri=https://app.snapattack.com
+api_key={{simulation.snapattack_api_key}}

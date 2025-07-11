@@ -1,0 +1,5 @@
+Import-Module "/root/AtomicRedTeam/invoke-atomicredteam/Invoke-AtomicRedTeam.psd1" -Force
+{% if simulation.cap_attack == '1' %}
+Import-Module "/root/capattack/capattack-ps/capattack.psd1" -Force
+{% endif %}
+$PSDefaultParameterValues = @{"Invoke-AtomicTest:PathToAtomicsFolder"="/root/AtomicRedTeam/atomics"}

@@ -1,0 +1,32 @@
+---
+
+- name: Create CAP Attack directory
+  file:
+    path: '/root/capattack'
+    state: directory
+    recurse: yes
+
+- name: Download CAP Attack zip file
+  get_url:
+    url: https://cdn.snapattack.com/resources/capattack/capattack.zip
+    dest: '/root/capattack/capattack.zip'
+    force: yes
+
+- name: Install unzip package
+  package:
+    name: unzip
+    state: present
+
+- name: Extract CAP Attack zip file
+  unarchive:
+    src: '/root/capattack/capattack.zip'
+    dest: '/root/capattack'
+    remote_src: yes
+    creates: '/root/capattack/capattack-ps'
+
+- name: Copy config.ini to CAP Attack directory
+  template:
+    src: 'config.ini.j2'
+    dest: '/root/capattack/capattack-ps/config.ini'
+    force: yes
+
