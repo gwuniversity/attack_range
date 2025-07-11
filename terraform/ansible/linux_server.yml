@@ -14,7 +14,7 @@
     - splunk_byo_linux
     - contentctl
     - cisco_secure_endpoint_linux
-    - red_team_tools
+    - cortex_xdr_endpoint_linux
     - role: caldera_agent
       vars:
         caldera_agent_server_type: "linux"

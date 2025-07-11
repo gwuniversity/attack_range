@@ -30,6 +30,7 @@
     - crowdstrike_falcon_agent_win
     - carbon_black_cloud_agent_win
     - cisco_secure_endpoint_win
+    - cortex_xdr_endpoint_win
     - role: caldera_agent
       vars:
         caldera_agent_server_type: "windows"
