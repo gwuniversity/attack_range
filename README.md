@@ -9,9 +9,11 @@
         <img src="https://img.shields.io/github/stars/splunk/attack_range?style=social" /></a>
 </p>
 
+> ⚠️ **Important:** After careful consideration, we have decided to deprecate the local deployment in Attack Range due to ongoing challenges with VirtualBox and Vagrant. We will concentrate our development efforts on the cloud providers AWS, Azure, and GCP. For local cyber range needs, we recommend using [Ludus](https://docs.ludus.cloud/) along with the [Attack Range environment](https://docs.ludus.cloud/docs/environment-guides/splunk-attack-range) it offers.
+
 # Splunk Attack Range ⚔️
 ![Attack Range Log](docs/attack_range.png)
-The Splunk Attack Range is an open-source project maintained by the Splunk Threat Research Team. It builds instrumented cloud (AWS, Azure) and local environments (Virtualbox), simulates attacks, and forwards the data into a Splunk instance. This environment can then be used to develop and test the effectiveness of detections.
+The Splunk Attack Range is an open-source project maintained by the Splunk Threat Research Team. It builds instrumented cloud (AWS, Azure, GCP), simulates attacks, and forwards the data into a Splunk instance. This environment can then be used to develop and test the effectiveness of detections. 
 
 ## Purpose 🛡
 The Attack Range is a detection development platform, which solves three main challenges in detection engineering:
@@ -36,6 +38,8 @@ python attack_range.py configure
 ```
 
 To install directly on Linux, or MacOS follow [these](https://attack-range.readthedocs.io/en/latest/Attack_Range_AWS.html#) instructions.
+
+If deploying in AWS, you may need to press [this button](https://console.aws.amazon.com/servicequotas/home/services/vpc/quotas/L-2AFB9258) and request a quota increase to 16 security groups per network interface.
 
 ## Architecture 🏯
 ![Logical Diagram](docs/attack_range_architecture.png)
@@ -162,6 +166,10 @@ python attack_range.py replay --file_name attack_data/dump.log --source test --s
   * Preconfigured Kali Linux machine for penetration testing
   * ssh connection over configured ssh key
 
+- [Caldera](https://github.com/mitre/caldera)
+  * Attack Simulation with [Caldera](https://github.com/mitre/caldera)
+  * Can be enabled, disabled and configured over [attack_range.yml](https://github.com/splunk/attack_range/blob/develop/attack_range.yml)
+
 
 ## Support 📞
 Please use the [GitHub issue tracker](https://github.com/splunk/attack_range/issues) to submit bugs or request features.
@@ -199,3 +207,6 @@ We welcome feedback and contributions from the community! Please see our [contri
 * Eric McGinnis
 * [Micheal Haag](https://twitter.com/M_haggis)
 * Gowthamaraj Rajendran
+* [Christopher Caldwell](https://github.com/cudgel)
+* [Zachary Christensen](https://github.com/ZachTheSplunker)
+* [JerinSaji0](https://github.com/JerinSaji0)

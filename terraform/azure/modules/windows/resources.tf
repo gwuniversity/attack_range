@@ -1,13 +1,13 @@
 
 locals {
-  custom_data_content = file("${path.module}/files/winrm.ps1")
+    custom_data_content  = file("${path.module}/files/winrm.ps1")
 }
 
 resource "azurerm_network_interface" "windows-nic" {
-  count               = length(var.windows_servers)
-  name                = "ar-windows-nic-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
-  location            = var.azure.location
-  resource_group_name = var.rg_name
+  count = length(var.windows_servers)
+  name = "ar-windows-nic-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
+  location = var.azure.location
+  resource_group_name  = var.rg_name
 
   ip_configuration {
     name                          = "ar-windows-nic-conf-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
@@ -19,7 +19,7 @@ resource "azurerm_network_interface" "windows-nic" {
 }
 
 resource "azurerm_public_ip" "windows-publicip" {
-  count               = length(var.windows_servers)
+  count       = length(var.windows_servers)
   name                = "ar-windows-ip-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
   location            = var.azure.location
   resource_group_name = var.rg_name
@@ -27,9 +27,9 @@ resource "azurerm_public_ip" "windows-publicip" {
 }
 
 resource "azurerm_virtual_machine" "windows" {
-  count                 = length(var.windows_servers)
-  name                  = "ar-win-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
-  location              = var.azure.location
+  count = length(var.windows_servers)
+  name = "ar-win-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
+  location = var.azure.location
   resource_group_name   = var.rg_name
   network_interface_ids = [azurerm_network_interface.windows-nic[count.index].id]
   vm_size               = "Standard_D4_v4"
@@ -37,7 +37,7 @@ resource "azurerm_virtual_machine" "windows" {
   delete_os_disk_on_termination = true
 
   storage_image_reference {
-    publisher = var.windows_servers[count.index].azure_publisher
+    publisher = var.windows_servers[count.index].azure_publisher 
     offer     = var.windows_servers[count.index].azure_offer
     sku       = var.windows_servers[count.index].azure_sku
     version   = "latest"
@@ -55,19 +55,19 @@ resource "azurerm_virtual_machine" "windows" {
     enable_automatic_upgrades = false
 
     additional_unattend_config {
-      pass         = "oobeSystem"
-      component    = "Microsoft-Windows-Shell-Setup"
-      setting_name = "AutoLogon"
-      content      = "<AutoLogon><Password><Value>${var.general.attack_range_password}</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount><Username>AzureAdmin</Username></AutoLogon>"
+        pass         = "oobeSystem"
+        component    = "Microsoft-Windows-Shell-Setup"
+        setting_name = "AutoLogon"
+        content      = "<AutoLogon><Password><Value>${var.general.attack_range_password}</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount><Username>AzureAdmin</Username></AutoLogon>"
     }
 
     #     # Unattend config is to enable basic auth in WinRM, required for the provisioner stage.
     #     # https://github.com/terraform-providers/terraform-provider-azurerm/blob/master/examples/virtual-machines/provisioners/windows/files/FirstLogonCommands.xml
     additional_unattend_config {
-      pass         = "oobeSystem"
-      component    = "Microsoft-Windows-Shell-Setup"
-      setting_name = "FirstLogonCommands"
-      content      = file("${path.module}/files/FirstLogonCommands.xml")
+        pass         = "oobeSystem"
+        component    = "Microsoft-Windows-Shell-Setup"
+        setting_name = "FirstLogonCommands"
+        content      = file("${path.module}/files/FirstLogonCommands.xml")
     }
   }
 
@@ -94,7 +94,7 @@ resource "azurerm_virtual_machine" "windows" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command     = <<-EOT
+    command = <<-EOT
       cat <<EOF > vars/windows_vars_${count.index}.json
       {
         "ansible_user": "AzureAdmin",
@@ -105,6 +105,7 @@ resource "azurerm_virtual_machine" "windows" {
         "splunk_server": ${jsonencode(var.splunk_server)},
         "simulation": ${jsonencode(var.simulation)},
         "windows_servers": ${jsonencode(var.windows_servers[count.index])},
+        "caldera_server": ${jsonencode(var.caldera_server)},
       }
       EOF
     EOT
@@ -112,7 +113,7 @@ resource "azurerm_virtual_machine" "windows" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command     = "ansible-playbook -i '${azurerm_public_ip.windows-publicip[count.index].ip_address},' windows.yml -e @vars/windows_vars_${count.index}.json"
+    command = "ansible-playbook -i '${azurerm_public_ip.windows-publicip[count.index].ip_address},' windows.yml -e @vars/windows_vars_${count.index}.json"
   }
 
 }

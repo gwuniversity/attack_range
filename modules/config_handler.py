@@ -22,6 +22,7 @@ class ConfigHandler:
             "general",
             "aws",
             "azure",
+            "gcp",
             "splunk_server",
             "phantom_server",
             "kali_server",

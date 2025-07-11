@@ -1,0 +1,12 @@
+
+general:
+  attack_range_password: "Pl3ase-k1Ll-me:p23"
+  cloud_provider: "aws"
+  key_name: "ar-github-actions"
+aws:
+  region: "us-central1"
+  private_key_path: "~/.ssh/ar-github-actions"
+windows_servers: 
+  - hostname: ar-win
+linux_servers: 
+  - hostname: ar-linux
