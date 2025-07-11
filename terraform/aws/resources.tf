@@ -127,6 +127,7 @@ module "caldera-server" {
   general                = var.general
   caldera_server         = var.caldera_server
   aws                    = var.aws
+  tags                   = local.tags
 }
 
 module "nlb_security_group" {

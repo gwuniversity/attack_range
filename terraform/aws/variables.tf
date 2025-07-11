@@ -129,3 +129,11 @@ variable "waf" {
     splunk_hec_endpoint_type          = "Raw"
   }
 }
+
+variable "caldera_server" {
+  type = map(string)
+
+  default = {
+    "caldera_server" = "0"
+  }
+}
