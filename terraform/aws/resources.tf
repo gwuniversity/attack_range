@@ -198,21 +198,21 @@ module "route53" {
 }
 
 
-module "waf" {
-  source              = "./modules/waf-regional"
-  waf_prefix          = "${var.general.name_prefix}-${var.general.attack_range_name}"
-  enable_logging      = true
-  log_destination_arn = module.firehose.kinesis_firehose_arn
-  resource_arn        = [module.application_load_balancer.arn]
-  tags                = local.tags
-  custom_csrf_token = [
-    {
-      field    = "x-twilio-signature"
-      size     = 28
-      operator = "GT"
-    }
-  ]
-}
+# module "waf" {
+#   source              = "./modules/waf-regional"
+#   waf_prefix          = "${var.general.name_prefix}-${var.general.attack_range_name}"
+#   enable_logging      = true
+#   log_destination_arn = module.firehose.kinesis_firehose_arn
+#   resource_arn        = [module.application_load_balancer.arn]
+#   tags                = local.tags
+#   custom_csrf_token = [
+#     {
+#       field    = "x-twilio-signature"
+#       size     = 28
+#       operator = "GT"
+#     }
+#   ]
+# }
 
 resource "aws_s3_bucket" "s3" {
   bucket        = "${var.general.name_prefix}-${var.general.attack_range_name}-waf-backup-${var.aws.region}"
@@ -220,19 +220,19 @@ resource "aws_s3_bucket" "s3" {
   tags          = local.tags
 }
 
-resource "aws_kms_key" "backup_key" {
-  description             = "${var.general.name_prefix}-${var.general.attack_range_name}-kms-key"
-  deletion_window_in_days = 7
-  tags                    = local.tags
-}
+# resource "aws_kms_key" "backup_key" {
+#   description             = "${var.general.name_prefix}-${var.general.attack_range_name}-kms-key"
+#   deletion_window_in_days = 7
+#   tags                    = local.tags
+# }
 
-module "firehose" {
-  source                = "./modules/firehose"
-  general               = var.general
-  waf                   = var.waf
-  destination           = "splunk"
-  input_source          = "waf"
-  s3_backup_bucket_arn  = aws_s3_bucket.s3.arn
-  s3_backup_kms_key_arn = aws_kms_key.backup_key.arn
-  tags                  = local.tags
-}
+# module "firehose" {
+#   source                = "./modules/firehose"
+#   general               = var.general
+#   waf                   = var.waf
+#   destination           = "splunk"
+#   input_source          = "waf"
+#   s3_backup_bucket_arn  = aws_s3_bucket.s3.arn
+#   s3_backup_kms_key_arn = aws_kms_key.backup_key.arn
+#   tags                  = local.tags
+# }
