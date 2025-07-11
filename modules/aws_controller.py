@@ -175,6 +175,144 @@ class AwsController(AttackRangeController):
             simulation_controller = PurplesharpSimulationController(self.config)
             simulation_controller.simulate(target, technique, playbook)
 
+    def start_cap_attack(self, target: str) -> None:
+        self.logger.info("[action] > start_cap_attack\n")
+        # Get all instances and find the target's IP address
+        instances = aws_service.get_all_instances(
+            self.config["general"]["key_name"],
+            self.config["general"]["attack_range_name"],
+            self.config["aws"]["region"],
+        )
+        ip_address = None
+        for instance in instances:
+            instance_name = instance["Tags"][0]["Value"]
+            if instance_name == target and instance["State"]["Name"] == "running":
+                try:
+                    public_ip = instance['NetworkInterfaces'][0]['Association'].get('PublicIp', None)
+                except Exception:
+                    public_ip = None
+                private_ip = instance['NetworkInterfaces'][0]['PrivateIpAddress']
+                ip_address = public_ip if public_ip else private_ip
+                break
+
+        if not ip_address:
+            self.logger.error(f"Could not find running instance with name {target}")
+            return
+
+        private_key_path = self.config["aws"]["private_key_path"]
+
+        if "win" in target:
+            ansible_user = "Administrator"
+            ansible_port = 5985
+            cmd_line = str("-i " + ip_address + ", ")
+            extravars = {
+                "ansible_port": ansible_port,
+                "ansible_connection": "winrm",
+                "ansible_winrm_server_cert_validation": "ignore",
+                "ansible_user": ansible_user,
+                "ansible_password": self.config["general"]["attack_range_password"],
+                "cap_attack_action": "start",
+            }
+        else:
+            ansible_user = "ubuntu"
+            ansible_port = 22
+            cmd_line = (
+                "-u "
+                + ansible_user
+                + " --private-key "
+                + private_key_path
+                + " -i "
+                + ip_address
+                + ", "
+            )
+            extravars = {
+                "ansible_port": ansible_port,
+                "ansible_connection": "ssh",
+                "ansible_user": ansible_user,
+                "cap_attack_action": "start",
+            }
+
+        ansible_runner.run(
+            private_data_dir=os.path.join(os.path.dirname(__file__), "../"),
+            cmdline=cmd_line,
+            roles_path=os.path.join(os.path.dirname(__file__), "ansible/roles"),
+            playbook=os.path.join(os.path.dirname(__file__), "ansible/cap_attack.yml"),
+            extravars=extravars,
+            verbosity=0,
+        )
+
+    def stop_cap_attack(self, target: str) -> None:
+        self.logger.info("[action] > stop_cap_attack\n")
+        # Get all instances and find the target's IP address
+        instances = aws_service.get_all_instances(
+            self.config["general"]["key_name"],
+            self.config["general"]["attack_range_name"],
+            self.config["aws"]["region"],
+        )
+        ip_address = None
+        for instance in instances:
+            instance_name = instance["Tags"][0]["Value"]
+            if instance_name == target and instance["State"]["Name"] == "running":
+                try:
+                    public_ip = instance['NetworkInterfaces'][0]['Association'].get('PublicIp', None)
+                except Exception:
+                    public_ip = None
+                private_ip = instance['NetworkInterfaces'][0]['PrivateIpAddress']
+                ip_address = public_ip if public_ip else private_ip
+                break
+
+        if not ip_address:
+            self.logger.error(f"Could not find running instance with name {target}")
+            return
+
+        private_key_path = self.config["aws"]["private_key_path"]
+
+        if "win" in target:
+            ansible_user = "Administrator"
+            ansible_port = 5985
+            cmd_line = str("-i " + ip_address + ", ")
+            extravars = {
+                "ansible_port": ansible_port,
+                "ansible_connection": "winrm",
+                "ansible_winrm_server_cert_validation": "ignore",
+                "ansible_user": ansible_user,
+                "ansible_password": self.config["general"]["attack_range_password"],
+                "cap_attack_action": "stop",
+                "cap_attack_upload_threat_capture": self.config["simulation"][
+                    "cap_attack_upload_threat_capture"
+                ],
+            }
+        else:
+            ansible_user = "ubuntu"
+            ansible_port = 22
+            cmd_line = (
+                "-u "
+                + ansible_user
+                + " --private-key "
+                + private_key_path
+                + " -i "
+                + ip_address
+                + ", "
+            )
+            extravars = {
+                "ansible_port": ansible_port,
+                "ansible_connection": "ssh",
+                "ansible_user": ansible_user,
+                "cap_attack_action": "stop",
+                "cap_attack_upload_threat_capture": self.config["simulation"][
+                    "cap_attack_upload_threat_capture"
+                ],
+            }
+
+        ansible_runner.run(
+            private_data_dir=os.path.join(os.path.dirname(__file__), "../"),
+            cmdline=cmd_line,
+            roles_path=os.path.join(os.path.dirname(__file__), "ansible/roles"),
+            playbook=os.path.join(os.path.dirname(__file__), "ansible/cap_attack.yml"),
+            extravars=extravars,
+            verbosity=0,
+        )
+
     def show(self) -> None:
         self.logger.info("[action] > show\n")
         instances = aws_service.get_all_instances(

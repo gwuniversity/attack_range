@@ -74,7 +74,6 @@ for data_source in data_sources:
                             ".", ""
                         )
                         app_filename = f"{app_filename_base}_{version_without_dots}.tgz"
-
                         s3_key = app_filename
 
                         # Check if file exists in S3 bucket

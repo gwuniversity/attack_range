@@ -29,6 +29,7 @@ class ConfigHandler:
             "simulation",
             "zeek_server",
             "snort_server",
+            "caldera_server",
             'httpd_server',
             'edge_processor',
             'waf'

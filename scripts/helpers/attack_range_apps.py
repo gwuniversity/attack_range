@@ -47,6 +47,26 @@ ATTACK_RANGE_SPLUNKBASE_APPS = [
         "name": "Snort Alert for Splunk",
         "url": "https://splunkbase.splunk.com/app/5488",
     },
+    {
+        "name": "Cisco Secure Endpoint App",
+        "url": "https://splunkbase.splunk.com/app/3670",
+    },
+    {
+        "name": "Cisco Secure Endpoint CIM Add-On",
+        "url": "https://splunkbase.splunk.com/app/3686",
+    },
+    {
+        "name": "Snort 3 JSON Alerts",
+        "url": "https://splunkbase.splunk.com/app/4633",
+    },
+    {
+        "name": "VMware Carbon Black Cloud",
+        "url": "https://splunkbase.splunk.com/app/5332",
+    },
+    {
+        "name": "Splunk Add-on for Palo Alto Networks",
+        "url": "https://splunkbase.splunk.com/app/7523",
+    },
 ]
 
 ATTACK_RANGE_LOCAL_APPS = [
