@@ -19,6 +19,10 @@
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
   when: providers.stdout is not search("NuGet")
 
+- name: Install CAP Attack
+  include_tasks: cap_attack.yml
+  when: simulation.cap_attack == "1"
+
 - name: Install Atomic Red Team
   win_shell: |
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Main" -Name "DisableFirstRunCustomize" -Value 2
@@ -29,8 +33,8 @@
   register: install_art
 
 - name: copy default powershell profile
-  win_copy:
-    src: profile.ps1
+  win_template:
+    src: profile.ps1.j2
     dest: C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
 
 - name: Download Latest PurpleSharp Binary

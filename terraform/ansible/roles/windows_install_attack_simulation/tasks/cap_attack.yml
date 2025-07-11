@@ -1,0 +1,36 @@
+---
+
+- name: Create CAP Attack directory
+  win_file:
+    path: 'C:\Program Files\ansible\capattack'
+    state: directory
+    recurse: yes
+
+- name: Download CAP Attack zip file
+  win_get_url:
+    url: https://cdn.snapattack.com/resources/capattack/capattack.zip
+    dest: 'C:\Program Files\ansible\capattack\capattack.zip'
+    force: yes
+
+- name: Install PowerShell Community Extensions
+  win_shell: |
+    if (!(Get-Module -ListAvailable -Name PSCX)) {
+      Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+      Install-Module -Name PSCX -Force -AllowClobber
+    }
+  args:
+    executable: powershell
+
+- name: Extract CAP Attack zip file
+  win_unzip:
+    src: 'C:\Program Files\ansible\capattack\capattack.zip'
+    dest: 'C:\Program Files\ansible\capattack'
+    recurse: yes
+    creates: 'C:\Program Files\ansible\capattack\capattack-ps'
+
+- name: Copy config.ini to CAP Attack directory
+  win_template:
+    src: 'config.ini.j2'
+    dest: 'C:\Program Files\ansible\capattack\capattack-ps\config.ini'
+    force: yes
+

@@ -1,3 +1,7 @@
 
+Set-ExecutionPolicy bypass
 Import-Module "C:\AtomicRedTeam\invoke-atomicredteam\Invoke-AtomicRedTeam.psd1" -Force 
+{% if simulation.cap_attack == '1' %}
+Import-Module "C:\Program Files\ansible\capattack\capattack-ps\capattack.psd1" -Force
+{% endif %}
 $PSDefaultParameterValues = @{"Invoke-AtomicTest:PathToAtomicsFolder"="C:\AtomicRedTeam\atomics"}
