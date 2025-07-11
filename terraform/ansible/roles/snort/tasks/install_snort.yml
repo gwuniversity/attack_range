@@ -1,24 +1,25 @@
 ---
+
 - name: Update apt cache
   apt:
     update_cache: yes
-  become: True
-  ignore_errors: True
+  become: yes
+  ignore_errors: yes
 
 - name: Update apt cache and upgrade all packages
   apt:
     update_cache: yes
     upgrade: dist
     force_apt_get: yes
-  become: True
-  ignore_errors: True
+  become: yes
+  ignore_errors: yes
 
 - name: Check if a reboot is needed
   register: reboot_required_file
-  stat:
+  stat: 
     path: /var/run/reboot-required
     get_md5: no
-  ignore_errors: True
+  ignore_errors: yes
 
 - name: Reboot the server if required
   reboot:
@@ -29,8 +30,8 @@
     post_reboot_delay: 30
     test_command: uptime
   when: reboot_required_file.stat.exists
-  become: True
-  ignore_errors: True
+  become: yes
+  ignore_errors: yes
 
 - name: Install Snort dependencies
   apt:
@@ -38,8 +39,6 @@
       - build-essential
       - libpcap-dev
       - libpcre3-dev
-      # Add PCRE2 library
-      - libpcre2-dev
       - libnet1-dev
       - zlib1g-dev
       - luajit
@@ -65,31 +64,32 @@
       - libunwind-dev
       - libfl-dev
       - unzip
+      - libpcre2-dev
     state: present
     update_cache: yes
-  become: True
+  become: yes
 
 - name: Create Snort source directory
   file:
     path: "~/snort_src"
     state: directory
-    mode: "0755"
+    mode: '0755'
 
 - name: Clone libdaq repository
   git:
-    repo: "https://github.com/snort3/libdaq.git"
-    dest: "~/snort_src/libdaq"
+    repo: 'https://github.com/snort3/libdaq.git'
+    dest: '~/snort_src/libdaq'
     version: master
 
 - name: Build and install libdaq
-  become: True
+  become: yes
   shell: |
     ./bootstrap
     ./configure
     make
     make install
   args:
-    chdir: "~/snort_src/libdaq"
+    chdir: '~/snort_src/libdaq'
     executable: /bin/bash
 
 - name: Download gperftools
@@ -104,7 +104,7 @@
     remote_src: yes
 
 - name: Build and install gperftools
-  become: True
+  become: yes
   shell: |
     ./configure
     make
@@ -125,7 +125,7 @@
     remote_src: yes
 
 - name: Configure and build Snort3
-  become: True
+  become: yes
   shell: |
     ./configure_cmake.sh --prefix=/usr/local --enable-tcmalloc
   args:
@@ -133,7 +133,7 @@
     executable: /bin/bash
 
 - name: Build and Install Snort3
-  become: True
+  become: yes
   shell: |
     make -j $(nproc) install
   args:
@@ -141,7 +141,7 @@
     executable: /bin/bash
 
 - name: Update shared library cache
-  become: True
+  become: yes
   command: ldconfig
 
 - name: Get Snort version

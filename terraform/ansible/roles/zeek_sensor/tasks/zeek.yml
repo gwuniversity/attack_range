@@ -8,6 +8,18 @@
     group: root
     mode: 0755
     force: yes
+  when: general.cloud_provider != "gcp"
+
+- name: install /etc/systemd/system/capture-int.service to set ens4 settings at boot
+  become: true
+  copy:
+    src: capture-int_gcp.service
+    dest: /etc/systemd/system/capture-int.service
+    owner: root
+    group: root
+    mode: 0755
+    force: yes
+  when: general.cloud_provider == "gcp"
 
 - name: systemctl daemon reload
   become: true
@@ -83,6 +95,15 @@
     path: /opt/zeek/etc/node.cfg
     regexp: 'eth0'
     replace: "ens5"
+  when: general.cloud_provider != "gcp"
+
+- name: Change Interface from eth0 to ens4 for GCP
+  become: true
+  replace:
+    path: /opt/zeek/etc/node.cfg
+    regexp: 'eth0'
+    replace: "ens4"
+  when: general.cloud_provider == "gcp"
 
 ####################################################################
 # Zeek deploy
@@ -94,3 +115,13 @@
     - 'install'
     - 'deploy'
     - 'status'
+
+- name: Check Zeek logs for errors
+  shell: '/opt/zeek/bin/zeekctl diag'
+  become: true
+  register: zeek_diag
+  failed_when: false
+
+- name: Display Zeek diagnostic information
+  debug:
+    var: zeek_diag.stdout_lines

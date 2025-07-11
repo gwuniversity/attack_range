@@ -1,4 +1,5 @@
 ---
+
 - name: fetch phantom api token version 5.x
   uri:
     url: https://10.64.16.13:8443/rest/ph_user/2/token

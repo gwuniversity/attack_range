@@ -9,6 +9,18 @@
     group: root
     mode: 0755
     force: yes
+  when: general.cloud_provider != "gcp"
+
+- name: install /etc/systemd/system/snort3-nic_gcp.service to set ens4 settings at boot
+  become: true
+  copy:
+    src: snort3-nic_gcp.service
+    dest: /etc/systemd/system/snort3-nic.service
+    owner: root
+    group: root
+    mode: 0755
+    force: yes
+  when: general.cloud_provider == "gcp"
 
 - name: systemctl daemon reload
   become: true

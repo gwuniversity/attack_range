@@ -73,7 +73,7 @@
 
 - name: Git clone donut
   win_shell: git clone https://github.com/TheWover/donut.git C:\tools\donut
-  when: windows_servers.install_red_team_tools == "1"
+  when: windows_servers.install_red_team_tools == "1" 
 
 # - name: Git clone PurpleSharp
 #   win_shell: git clone https://github.com/mvelazc0/PurpleSharp.git c:\tools\PurpleSharp
@@ -85,3 +85,4 @@
   ignore_errors: yes
 
 
+  

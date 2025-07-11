@@ -1,16 +1,5 @@
 ---
-
-# - name: Change mirror to vault.centos.org
-#   shell: sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
-#   become: yes
-
-# - name: Uncomment baseurl lines
-#   shell: sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
-#   become: yes
-
-# - name: Comment out mirrorlist lines
-#   shell: sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
-#   become: yes
+# Install Phantom from RPM on a fresh cloud-user 8 instance
 
 - name: Update all packages
   become: yes
@@ -25,9 +14,7 @@
   become_user: root
   unarchive:
     src: "../../apps/{{ phantom_server.phantom_app }}"
-    dest: /home/ec2-user
-    owner: ec2-user
-    group: ec2-user
+    dest: /home/root
 
 - name: Creates directory
   become: yes
@@ -35,17 +22,15 @@
   file:
     path: /opt/soar
     state: directory
-    owner: ec2-user
-    group: ec2-user
 
 - name: prepare phantom install script without apps
   become: yes
-  command: /home/ec2-user/splunk-soar/soar-prepare-system --splunk-soar-home /opt/soar --no-prompt 
+  command: /home/root/splunk-soar/soar-prepare-system --splunk-soar-home /opt/soar --no-prompt 
 
 - name: copy splunk soar folder
   become: yes
   become_user: root
-  command: cp -r /home/ec2-user/splunk-soar /home/phantom/splunk-soar
+  command: cp -r /home/root/splunk-soar /home/phantom/splunk-soar
 
 - name: chown splunk soar folder
   become: yes

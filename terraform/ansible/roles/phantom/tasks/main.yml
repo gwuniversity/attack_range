@@ -7,6 +7,9 @@
 - include_tasks: install_phantom_azure.yml
   when: general.cloud_provider == "azure"
 
+- include_tasks: install_phantom_gcp.yml
+  when: general.cloud_provider == "gcp"
+
 - include_tasks: install_phantom_local.yml
   when: general.cloud_provider == "local"
 

@@ -1,4 +1,5 @@
 ---
+
 - name: fetch phantom api token version 5.x
   uri:
     url: https://192.168.56.13:8443/rest/ph_user/2/token
@@ -39,4 +40,4 @@
 
 - name: restart splunk
   service: name=splunk state=restarted
-  become: True
+  become: yes

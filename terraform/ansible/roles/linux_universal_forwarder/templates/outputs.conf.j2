@@ -1,23 +1,9 @@
 [tcpout]
-{% if edge_processor.edge_processor == '1' %}
-defaultGroup=my_indexers,my_edge_processor
-{%- else -%}
 defaultGroup=my_indexers
-{%- endif %}
-
 
 [tcpout:my_indexers]
 {% if general.cloud_provider == 'local' %}
 server=192.168.56.12:9997
 {%- else -%}
-server={{ splunk_server.splunk_server_ip }}:9997
+server=10.0.1.12:9997
 {%- endif %}
-
-
-[tcpout:my_edge_processor]
-{% if edge_processor.use_nlb == '1' %}
-server={{ general.edge_domain }}:9997
-{%- else -%}
-server={{ edge_processor.edge_processor_ip }}:9997
-{%- endif %}
-

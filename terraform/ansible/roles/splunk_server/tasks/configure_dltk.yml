@@ -1,4 +1,5 @@
 ---
+
 - name: Install aptitude
   apt:
     name: aptitude
@@ -43,7 +44,7 @@
     name: splunk
     groups: docker
     append: yes
-  become: True
+  become: yes
 
 - name: Create folder directory for configuration
   file:
