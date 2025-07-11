@@ -53,21 +53,17 @@ module "windows-server" {
 module "linux-server" {
   source                 = "./modules/linux-server"
   vpc_security_group_ids = module.networkModule.sg_vpc_id
-  ec2_subnet_id = try(
-    var.linux_servers.subnet_id,
-    var.aws.use_public_ips == "1" ? var.aws.private_subnet_1 : null,
-    module.networkModule.ec2_subnet_id
-  )
-  general               = var.general
-  aws                   = var.aws
-  zeek_server           = var.zeek_server
-  snort_server          = var.snort_server
-  edge_processor        = var.edge_processor
-  linux_servers         = var.linux_servers
-  simulation            = var.simulation
-  splunk_server         = var.splunk_server
-  instance_profile_name = aws_iam_instance_profile.s3_access.name
-  tags                  = local.tags
+  ec2_subnet_id          = module.networkModule.ec2_subnet_id
+  general                = var.general
+  aws                    = var.aws
+  zeek_server            = var.zeek_server
+  snort_server           = var.snort_server
+  edge_processor         = var.edge_processor
+  linux_servers          = var.linux_servers
+  simulation             = var.simulation
+  splunk_server          = var.splunk_server
+  instance_profile_name  = aws_iam_instance_profile.s3_access.name
+  tags                   = local.tags
 }
 
 module "kali-server" {
@@ -122,6 +118,15 @@ module "snort-server" {
   splunk_server            = var.splunk_server
   apache_server_instance   = module.apache_httpd.httpd_server
   tags                     = local.tags
+}
+
+module "caldera-server" {
+  source                 = "./modules/caldera-server"
+  vpc_security_group_ids = module.networkModule.sg_vpc_id
+  ec2_subnet_id          = module.networkModule.ec2_subnet_id
+  general                = var.general
+  caldera_server         = var.caldera_server
+  aws                    = var.aws
 }
 
 module "nlb_security_group" {

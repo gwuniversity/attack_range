@@ -2,7 +2,7 @@
 
 - name: Upload replay
   copy:
-    src: ../../{{ file_name }}
+    src: "{{ file_name }}"
     dest: /tmp/data.log
 
 - name: Call oneshot import

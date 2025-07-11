@@ -13,6 +13,9 @@
     - update_sysmon_config_linux
     - splunk_byo_linux
     - contentctl
+    - cisco_secure_endpoint_linux
     - red_team_tools
-    - tenable_agent
-    - cortex_xdr
+    - role: caldera_agent
+      vars:
+        caldera_agent_server_type: "linux"
+      when: caldera_server.caldera_server == "1" and linux_servers.install_caldera_agent == "1"

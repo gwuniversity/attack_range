@@ -26,6 +26,11 @@ locals {
   vpc_id = var.aws.create_vpc == "1" ? module.vpc[0].vpc_id : var.aws.vpc_id
 }
 
+# Create AWS Security Groups
+# Default security group for all subnets in the attack range
+# Allows all traffic within the attack range
+# Allows ICMP traffic within the attack range
+# Allows all outbound traffic
 resource "aws_security_group" "default" {
   name   = "sg_subnets_${var.general.key_name}_${var.general.attack_range_name}"
   vpc_id = local.vpc_id

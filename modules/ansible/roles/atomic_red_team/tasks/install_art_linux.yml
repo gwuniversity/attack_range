@@ -1,0 +1,53 @@
+---
+
+- name: Update apt repositories
+  apt:
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+
+- name: Update yum repositories
+  yum:
+    update_cache: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Install x11-xserver-utils (Debian/Ubuntu)
+  apt:
+    name: x11-xserver-utils
+    state: present
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+
+- name: Install xorg-x11-server-utils (RedHat)
+  yum:
+    name: xorg-x11-server-utils
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install PowerShell on Debian-based systems
+  shell: |
+    # Download the Microsoft repository GPG keys
+    wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb
+    # Register the Microsoft repository GPG keys
+    dpkg -i packages-microsoft-prod.deb
+    # Update the list of products
+    apt-get update
+    # Install PowerShell
+    apt-get install -y powershell
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+  args:
+    creates: /usr/bin/pwsh
+
+- name: Install PowerShell on RedHat-based systems
+  shell: |
+    # Register the Microsoft RedHat repository
+    curl https://packages.microsoft.com/config/rhel/$(rpm -E %{rhel})/prod.repo | tee /etc/yum.repos.d/microsoft.repo
+    # Install PowerShell
+    yum install -y powershell
+  when: ansible_os_family == "RedHat"
+  args:
+    creates: /usr/bin/pwsh
+
+- name: Install Atomic Red Team
+  shell: |
+    pwsh -Command "IEX (IWR 'https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1' -UseBasicParsing); Install-AtomicRedTeam -getAtomics"
+  args:
+    creates: ~/.atomics 

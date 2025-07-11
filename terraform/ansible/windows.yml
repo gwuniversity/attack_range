@@ -4,8 +4,15 @@
     ansible_connection: winrm
     ansible_winrm_server_cert_validation: ignore
     ansible_port: 5985
-    ansible_winrm_operation_timeout_sec: 300
-    ansible_winrm_read_timeout_sec: 900
+    ansible_winrm_operation_timeout_sec: 600
+    ansible_winrm_read_timeout_sec: 1200
+    ansible_winrm_connection_timeout: 600
+    ansible_winrm_transport: basic
+    ansible_winrm_scheme: http
+    ansible_winrm_kerberos_delegation: false
+    ansible_winrm_message_encryption: auto
+    ansible_winrm_retry_timeout: 600
+    ansible_winrm_retry_interval: 10
   roles:
     - windows_common
     - windows_universal_forwarder
@@ -22,6 +29,8 @@
     - windows_install_attack_simulation
     - crowdstrike_falcon_agent
     - carbon_black_cloud_agent
-    - cortex_xdr
-    - tenable_agent
-    - cisco_amp
+    - cisco_secure_endpoint_win
+    - role: caldera_agent
+      vars:
+        caldera_agent_server_type: "windows"
+      when: caldera_server.caldera_server == "1" and windows_servers.install_caldera_agent == "1"
