@@ -1,7 +1,7 @@
 <IfModule mod_ssl.c>
   <VirtualHost _default_:443>
-    ServerAdmin admin@attackrange.internal
-    ServerName www.attackrange.internal
+    ServerAdmin admin@{{ general.dns_zone }}
+    ServerName www.{{ general.dns_zone }}
 
     DocumentRoot /var/www/html
 

@@ -1,5 +1,4 @@
 ---
-
 - name: features | Installing Windows DNS Server
   win_feature:
     name: DNS
@@ -35,7 +34,7 @@
 
 - name: Creating a windows domain
   win_domain:
-    dns_domain_name: "attackrange.internal"
+    dns_domain_name: "{{ general.dns_zone }}"
     safe_mode_password: "{{ general.attack_range_password }}"
 
 - name: Setting DNS Servers
@@ -49,8 +48,8 @@
 
 - name: Managing Domain Controller Membership
   win_domain_controller:
-    dns_domain_name: "attackrange.internal"
-    domain_admin_user: "{{ ansible_user }}@attackrange.internal"
+    dns_domain_name: "{{ general.dns_zone }}"
+    domain_admin_user: "{{ ansible_user }}@{{ general.dns_zone }}"
     domain_admin_password: "{{ general.attack_range_password }}"
     safe_mode_password: "{{ general.attack_range_password }}"
     state: "domain_controller"
