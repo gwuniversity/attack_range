@@ -1,12 +1,14 @@
+
 variable "vpc_security_group_ids" {}
 variable "ec2_subnet_id" {}
 variable "general" {}
 variable "aws" {}
 variable "windows_servers" {}
-variable "zeek_server" {}
 variable "splunk_server" {}
 variable "simulation" {}
-variable "instance_profile_name" {}
+variable "zeek_server" {}
 variable "snort_server" {}
+variable "caldera_server" {}
+variable "instance_profile_name" {}
 variable "edge_processor" {}
 variable "tags" {}

@@ -40,12 +40,13 @@ module "windows-server" {
   ec2_subnet_id          = module.networkModule.ec2_subnet_id
   general                = var.general
   aws                    = var.aws
-  windows_servers        = var.windows_servers
-  simulation             = var.simulation
   zeek_server            = var.zeek_server
   snort_server           = var.snort_server
-  edge_processor         = var.edge_processor
+  windows_servers        = var.windows_servers
+  simulation             = var.simulation
   splunk_server          = var.splunk_server
+  caldera_server         = var.caldera_server
+  edge_processor         = var.edge_processor
   instance_profile_name  = aws_iam_instance_profile.s3_access.name
   tags                   = local.tags
 }
@@ -58,10 +59,11 @@ module "linux-server" {
   aws                    = var.aws
   zeek_server            = var.zeek_server
   snort_server           = var.snort_server
-  edge_processor         = var.edge_processor
   linux_servers          = var.linux_servers
   simulation             = var.simulation
   splunk_server          = var.splunk_server
+  caldera_server         = var.caldera_server
+  edge_processor         = var.edge_processor
   instance_profile_name  = aws_iam_instance_profile.s3_access.name
   tags                   = local.tags
 }
@@ -93,12 +95,12 @@ module "zeek-server" {
   general                  = var.general
   aws                      = var.aws
   zeek_server              = var.zeek_server
-  edge_processor           = var.edge_processor
   windows_servers          = var.windows_servers
   windows_server_instances = module.windows-server.windows_servers
   linux_servers            = var.linux_servers
   linux_server_instances   = module.linux-server.linux_servers
   splunk_server            = var.splunk_server
+  edge_processor           = var.edge_processor
   apache_server_instance   = module.apache_httpd.httpd_server
   tags                     = local.tags
 }
@@ -110,12 +112,12 @@ module "snort-server" {
   general                  = var.general
   aws                      = var.aws
   snort_server             = var.snort_server
-  edge_processor           = var.edge_processor
   windows_servers          = var.windows_servers
   windows_server_instances = module.windows-server.windows_servers
   linux_servers            = var.linux_servers
   linux_server_instances   = module.linux-server.linux_servers
   splunk_server            = var.splunk_server
+  edge_processor           = var.edge_processor
   apache_server_instance   = module.apache_httpd.httpd_server
   tags                     = local.tags
 }

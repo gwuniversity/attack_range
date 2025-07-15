@@ -7,6 +7,7 @@ variable "linux_servers" {}
 variable "simulation" {}
 variable "zeek_server" {}
 variable "snort_server" {}
+variable "caldera_server" {}
 variable "splunk_server" {}
 variable "instance_profile_name" {}
 variable "edge_processor" {}
