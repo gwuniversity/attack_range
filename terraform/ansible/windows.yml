@@ -18,7 +18,6 @@
     - windows_universal_forwarder
     - sysmon
     - set_hostname_win
-    - windows_splunk_post
     - create_domain_controller
     - update_sysmon_config
     - red_team_tools
