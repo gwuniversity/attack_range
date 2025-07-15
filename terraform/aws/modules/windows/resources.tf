@@ -38,29 +38,44 @@ resource "aws_instance" "windows_server" {
 <powershell>
 $admin = [adsi]("WinNT://./Administrator, user")
 $admin.PSBase.Invoke("SetPassword", "${var.general.attack_range_password}")
+
+# Stop WinRM service first
+net stop winrm
+
+# Configure WinRM from scratch
 winrm quickconfig -q
-winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
 winrm set winrm/config '@{MaxTimeoutms="1800000"}'
+winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
 winrm set winrm/config/service '@{AllowUnencrypted="true"}'
 winrm set winrm/config/service/auth '@{Basic="true"}'
+winrm set winrm/config/client/auth '@{Basic="true"}'
+winrm set winrm/config/listener?Address=*+Transport=HTTP '@{Port="5985"}'
+
+# Configure firewall rules
 netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow
 netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
-net stop winrm
+
+# Enable PSRemoting and skip network profile check
+Enable-PSRemoting -SkipNetworkProfileCheck -Force
+
+# Configure WinRM service
 sc.exe config winrm start=auto
 net start winrm
+
+# Enable RDP
 Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0
-Enable-PSRemoting -SkipNetworkProfileCheck -Force
-# Variable specifying the drive you want to extend
+
+# Extend C drive
 $drive_letter = "C"
-# Script to get the partition sizes and then resize the volume
 $size = (Get-PartitionSupportedSize -DriveLetter $drive_letter)
 Resize-Partition -DriveLetter $drive_letter -Size $size.SizeMax
 </powershell>
 EOF
 
   root_block_device {
-    volume_type = "gp3"
-    volume_size = "60"
+    volume_type           = "gp3"
+    delete_on_termination = true
+    volume_size           = "60"
   }
 
   provisioner "remote-exec" {
@@ -95,6 +110,7 @@ EOF
         "edge_processor": ${jsonencode(var.edge_processor)},
         "simulation": ${jsonencode(var.simulation)},
         "windows_servers": ${jsonencode(var.windows_servers[count.index])},
+        "caldera_server": ${jsonencode(var.caldera_server)},
       }
       EOF
     EOT
