@@ -8,8 +8,9 @@ data "aws_subnet" "private_subnet_2" {
 
 # Create VPC if var.aws.create_vpc is set to "1"
 module "vpc" {
-  count  = var.aws.create_vpc == "1" ? 1 : 0
-  source = "terraform-aws-modules/vpc/aws"
+  count   = var.aws.create_vpc == "1" ? 1 : 0
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.0"
 
   name                 = "vpc_${var.general.key_name}_${var.general.attack_range_name}"
   cidr                 = "10.0.0.0/16"

@@ -1,6 +1,6 @@
 - hosts: all
-  gather_facts: True
-  become: True
+  gather_facts: False
+  become: true
   roles:
     - set_hostname_linux
     - linux_common
@@ -13,8 +13,8 @@
     - update_sysmon_config_linux
     - splunk_byo_linux
     - contentctl
+    - crowdstrike_falcon_agent_linux
     - cisco_secure_endpoint_linux
-    - cortex_xdr_endpoint_linux
     - role: caldera_agent
       vars:
         caldera_agent_server_type: "linux"
