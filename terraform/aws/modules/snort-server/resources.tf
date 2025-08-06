@@ -44,7 +44,7 @@ resource "aws_instance" "snort_sensor" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      host        = var.aws.use_public_ips == "1" ? aws_instance.snort_sensor[0].public_ip : aws_instance.snort_sensor[0].private_ip
+      host        = var.aws.use_public_ips == "1" ? self.public_ip : self.private_ip
       private_key = file(var.aws.private_key_path)
     }
   }
@@ -66,7 +66,7 @@ resource "aws_instance" "snort_sensor" {
 
   provisioner "local-exec" {
     working_dir = "../ansible"
-    command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${var.aws.use_public_ips == "1" ? aws_instance.snort_sensor[0].public_ip : aws_instance.snort_sensor[0].private_ip},' snort_server.yml -e @vars/snort_vars.json"
+    command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key '${var.aws.private_key_path}' -i '${var.aws.use_public_ips == "1" ? self.public_ip : self.private_ip},' snort_server.yml -e @vars/snort_vars.json"
   }
 }
 
