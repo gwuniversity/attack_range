@@ -34,40 +34,6 @@ module "phantom-server" {
   instance_profile_name  = aws_iam_instance_profile.s3_access.name
 }
 
-module "windows-server" {
-  source                 = "./modules/windows"
-  vpc_security_group_ids = module.networkModule.sg_vpc_id
-  ec2_subnet_id          = module.networkModule.ec2_subnet_id
-  general                = var.general
-  aws                    = var.aws
-  zeek_server            = var.zeek_server
-  snort_server           = var.snort_server
-  windows_servers        = var.windows_servers
-  simulation             = var.simulation
-  splunk_server          = var.splunk_server
-  caldera_server         = var.caldera_server
-  edge_processor         = var.edge_processor
-  instance_profile_name  = aws_iam_instance_profile.s3_access.name
-  tags                   = local.tags
-}
-
-module "linux-server" {
-  source                 = "./modules/linux-server"
-  vpc_security_group_ids = module.networkModule.sg_vpc_id
-  ec2_subnet_id          = module.networkModule.ec2_subnet_id
-  general                = var.general
-  aws                    = var.aws
-  zeek_server            = var.zeek_server
-  snort_server           = var.snort_server
-  linux_servers          = var.linux_servers
-  simulation             = var.simulation
-  splunk_server          = var.splunk_server
-  caldera_server         = var.caldera_server
-  edge_processor         = var.edge_processor
-  instance_profile_name  = aws_iam_instance_profile.s3_access.name
-  tags                   = local.tags
-}
-
 module "kali-server" {
   source                 = "./modules/kali-server"
   vpc_security_group_ids = module.networkModule.sg_vpc_id
@@ -89,37 +55,27 @@ module "nginx-server" {
 }
 
 module "zeek-server" {
-  source                   = "./modules/zeek-server"
-  vpc_security_group_ids   = module.networkModule.sg_vpc_id
-  ec2_subnet_id            = module.networkModule.ec2_subnet_id
-  general                  = var.general
-  aws                      = var.aws
-  zeek_server              = var.zeek_server
-  windows_servers          = var.windows_servers
-  windows_server_instances = module.windows-server.windows_servers
-  linux_servers            = var.linux_servers
-  linux_server_instances   = module.linux-server.linux_servers
-  splunk_server            = var.splunk_server
-  edge_processor           = var.edge_processor
-  apache_server_instance   = module.apache_httpd.httpd_server
-  tags                     = local.tags
+  source                 = "./modules/zeek-server"
+  vpc_security_group_ids = module.networkModule.sg_vpc_id
+  ec2_subnet_id          = module.networkModule.ec2_subnet_id
+  general                = var.general
+  aws                    = var.aws
+  zeek_server            = var.zeek_server
+  splunk_server          = var.splunk_server
+  edge_processor         = var.edge_processor
+  tags                   = local.tags
 }
 
 module "snort-server" {
-  source                   = "./modules/snort-server"
-  vpc_security_group_ids   = module.networkModule.sg_vpc_id
-  ec2_subnet_id            = module.networkModule.ec2_subnet_id
-  general                  = var.general
-  aws                      = var.aws
-  snort_server             = var.snort_server
-  windows_servers          = var.windows_servers
-  windows_server_instances = module.windows-server.windows_servers
-  linux_servers            = var.linux_servers
-  linux_server_instances   = module.linux-server.linux_servers
-  splunk_server            = var.splunk_server
-  edge_processor           = var.edge_processor
-  apache_server_instance   = module.apache_httpd.httpd_server
-  tags                     = local.tags
+  source                 = "./modules/snort-server"
+  vpc_security_group_ids = module.networkModule.sg_vpc_id
+  ec2_subnet_id          = module.networkModule.ec2_subnet_id
+  general                = var.general
+  aws                    = var.aws
+  snort_server           = var.snort_server
+  splunk_server          = var.splunk_server
+  edge_processor         = var.edge_processor
+  tags                   = local.tags
 }
 
 module "caldera-server" {
@@ -156,7 +112,55 @@ module "network_load_balancer" {
   general                    = var.general
   aws                        = var.aws
   edge_processor             = var.edge_processor
+  zeek_server                = var.zeek_server
+  snort_server               = var.snort_server
   nlb_security_group_id      = module.nlb_security_group.id
   edge-processor_instance_id = module.edge_processor.instance_id
+  zeek_network_interface_id  = module.zeek-server.network_interface_id
+  snort_network_interface_id = module.snort-server.network_interface_id
   tags                       = local.tags
 }
+
+module "windows-server" {
+  source                 = "./modules/windows"
+  vpc_security_group_ids = module.networkModule.sg_vpc_id
+  ec2_subnet_id          = module.networkModule.ec2_subnet_id
+  general                = var.general
+  aws                    = var.aws
+  zeek_server            = var.zeek_server
+  snort_server           = var.snort_server
+  windows_servers        = var.windows_servers
+  simulation             = var.simulation
+  splunk_server          = var.splunk_server
+  caldera_server         = var.caldera_server
+  edge_processor         = var.edge_processor
+  instance_profile_name  = aws_iam_instance_profile.s3_access.name
+  tags = merge(local.tags, {
+    Mirror          = "True"
+    "Mirror-Target" = module.network_load_balancer.traffic_mirror_target_id
+    "Mirror-Filter" = module.network_load_balancer.traffic_mirror_filter_id
+  })
+}
+
+module "linux-server" {
+  source                 = "./modules/linux-server"
+  vpc_security_group_ids = module.networkModule.sg_vpc_id
+  ec2_subnet_id          = module.networkModule.ec2_subnet_id
+  general                = var.general
+  aws                    = var.aws
+  zeek_server            = var.zeek_server
+  snort_server           = var.snort_server
+  linux_servers          = var.linux_servers
+  simulation             = var.simulation
+  splunk_server          = var.splunk_server
+  caldera_server         = var.caldera_server
+  edge_processor         = var.edge_processor
+  instance_profile_name  = aws_iam_instance_profile.s3_access.name
+  tags = merge(local.tags, {
+    Mirror          = "True"
+    "Mirror-Target" = module.network_load_balancer.traffic_mirror_target_id
+    "Mirror-Filter" = module.network_load_balancer.traffic_mirror_filter_id
+  })
+}
+
+

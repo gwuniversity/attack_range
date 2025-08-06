@@ -3,11 +3,6 @@ variable "ec2_subnet_id" {}
 variable "general" {}
 variable "aws" {}
 variable "zeek_server" {}
-variable "windows_servers" {}
-variable "windows_server_instances" {}
-variable "linux_servers" {}
-variable "linux_server_instances" {}
 variable "splunk_server" {}
-variable "apache_server_instance" {}
 variable "edge_processor" {}
 variable "tags" {}

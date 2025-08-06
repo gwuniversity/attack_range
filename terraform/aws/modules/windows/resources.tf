@@ -30,6 +30,9 @@ resource "aws_instance" "windows_server" {
 
   tags = merge({
     Name = "ar-win-${var.general.key_name}-${var.general.attack_range_name}-${count.index}"
+    Mirror = "True"
+    "Mirror-Target" = var.nlb_traffic_mirror_target_id != null ? var.nlb_traffic_mirror_target_id : ""
+    "Mirror-Filter" = var.nlb_traffic_mirror_filter_id != null ? var.nlb_traffic_mirror_filter_id : ""
     },
     var.tags
   )
