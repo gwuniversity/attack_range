@@ -139,13 +139,6 @@ module "nlb_security_group" {
   tags    = local.tags
 }
 
-module "elb_security_group" {
-  source  = "./modules/elb_security_group"
-  general = var.general
-  aws     = var.aws
-  tags    = local.tags
-}
-
 module "edge_processor" {
   vpc_security_group_ids = module.networkModule.sg_vpc_id
   source                 = "./modules/edge_processor"
@@ -166,35 +159,4 @@ module "network_load_balancer" {
   nlb_security_group_id      = module.nlb_security_group.id
   edge-processor_instance_id = module.edge_processor.instance_id
   tags                       = local.tags
-}
-
-module "apache_httpd" {
-  vpc_security_group_ids = module.networkModule.sg_vpc_id
-  source                 = "./modules/apache/httpd"
-  general                = var.general
-  aws                    = var.aws
-  httpd_server           = var.httpd_server
-  splunk_server          = var.splunk_server
-  edge_processor         = var.edge_processor
-  elb_security_group_id  = module.elb_security_group.id
-  instance_profile_name  = aws_iam_instance_profile.s3_access.name
-  tags                   = local.tags
-}
-
-module "application_load_balancer" {
-  source                   = "./modules/elb"
-  general                  = var.general
-  aws                      = var.aws
-  httpd_server             = var.httpd_server
-  elb_security_group_id    = module.elb_security_group.id
-  apache-httpd_instance_id = module.apache_httpd.instance_id
-  tags                     = local.tags
-}
-
-module "route53" {
-  source       = "./modules/route53"
-  aws          = var.aws
-  general      = var.general
-  alb_dns_name = module.application_load_balancer.dns_name
-  nlb_dns_name = module.network_load_balancer.dns_name
 }
