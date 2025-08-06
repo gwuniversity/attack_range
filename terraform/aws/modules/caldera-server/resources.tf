@@ -42,7 +42,7 @@ resource "aws_instance" "caldera_server" {
     connection {
       type        = "ssh"
       user        = "admin"
-      host        = var.aws.use_public_ips == "1" ? aws_instance.caldera_server[0].public_ip : aws_instance.caldera_server[0].private_ip
+      host        = var.aws.use_public_ips == "1" ? self.public_ip : self.private_ip
       private_key = file(var.aws.private_key_path)
     }
   }
@@ -56,7 +56,7 @@ resource "aws_instance" "caldera_server" {
         "general": ${jsonencode(var.general)},
         "aws": ${jsonencode(var.aws)},
         "caldera_server": ${jsonencode(var.caldera_server)},
-        "public_ip": ${jsonencode(var.aws.use_public_ips == "1" ? aws_instance.caldera_server[0].public_ip : aws_instance.caldera_server[0].private_ip)},
+        "public_ip": ${jsonencode(var.aws.use_public_ips == "1" ? self.public_ip : self.private_ip)},
         "aws_eip": ${jsonencode(var.aws.use_elastic_ips)}
       }
       EOF
@@ -66,7 +66,7 @@ resource "aws_instance" "caldera_server" {
   provisioner "local-exec" {
     working_dir = "../ansible"
     command     = <<-EOT
-      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u admin --private-key '${var.aws.private_key_path}' -i '${var.aws.use_public_ips == "1" ? aws_instance.caldera_server[0].public_ip : aws_instance.caldera_server[0].private_ip},' caldera_server.yml -e "@vars/caldera_vars.json"
+      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u admin --private-key '${var.aws.private_key_path}' -i '${var.aws.use_public_ips == "1" ? self.public_ip : self.private_ip},' caldera_server.yml -e "@vars/caldera_vars.json"
     EOT
   }
 
