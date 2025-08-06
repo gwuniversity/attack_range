@@ -1,6 +1,6 @@
 resource "aws_lb" "nlb" {
   count                                                        = var.edge_processor.use_nlb == "1" ? 1 : 0
-  name                                                         = "ar-nlb-edge-${var.general.attack_range_name}"
+  name                                                         = "ar-nlb-${var.general.attack_range_name}"
   internal                                                     = true # Set to true for internal/private NLB
   load_balancer_type                                           = "network"
   dns_record_client_routing_policy                             = "availability_zone_affinity"
@@ -10,7 +10,7 @@ resource "aws_lb" "nlb" {
   enable_cross_zone_load_balancing                             = true
   enforce_security_group_inbound_rules_on_private_link_traffic = "off"
 
-  tags = merge({ Name = "ar-nlb-edge-${var.general.key_name}-${var.general.attack_range_name}" },
+  tags = merge({ Name = "ar-nlb-${var.general.key_name}-${var.general.attack_range_name}" },
     var.tags
   )
 }
@@ -21,7 +21,7 @@ resource "aws_lb_target_group" "splunkd_tg" {
   protocol = "TCP"
   vpc_id   = var.aws.vpc_id
 
-  tags = merge({ Name = "ar-nlb-edge-${var.general.attack_range_name}" },
+  tags = merge({ Name = "ar-nlb-${var.general.attack_range_name}" },
     var.tags
   )
 }

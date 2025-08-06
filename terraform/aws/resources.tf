@@ -4,13 +4,6 @@ module "networkModule" {
   aws     = var.aws
 }
 
-# Deploy AutoMirror serverless application
-resource "aws_serverlessapplicationrepository_cloudformation_stack" "automirror" {
-  name           = "serverlessrepo-AutoMirror"
-  application_id = "arn:aws:serverlessrepo:us-east-1:216624486486:applications/AutoMirror"
-  capabilities   = ["CAPABILITY_IAM"]
-}
-
 module "splunk-server" {
   source                 = "./modules/splunk-server"
   vpc_security_group_ids = module.networkModule.sg_vpc_id
