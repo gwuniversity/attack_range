@@ -3,9 +3,9 @@ output "sg_vpc_id" {
 }
 
 output "vpc_id" {
-  value = var.aws.create_vpc == "1" ? module.vpc[0].vpc_id : var.aws.vpc_id
+  value = local.vpc_id
 }
 
 output "ec2_subnet_id" {
-  value = var.aws.create_vpc == "1" ? module.vpc[0].public_subnets[0].id : var.aws.private_subnet_1
+  value = local.use_existing_vpc ? var.aws.private_subnet_1 : module.vpc[0].public_subnets[0]
 }
