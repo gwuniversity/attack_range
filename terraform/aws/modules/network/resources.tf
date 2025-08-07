@@ -1,14 +1,20 @@
+locals {
+  use_existing_vpc = var.aws.vpc_id != ""
+}
+
 data "aws_subnet" "private_subnet_1" {
-  id = var.aws.private_subnet_1
+  count = local.use_existing_vpc ? 1 : 0
+  id    = var.aws.private_subnet_1
 }
 
 data "aws_subnet" "private_subnet_2" {
-  id = var.aws.private_subnet_2
+  count = local.use_existing_vpc ? 1 : 0
+  id    = var.aws.private_subnet_2
 }
 
-# Create VPC if var.aws.create_vpc is set to "1"
+# Create VPC if vpc_id is not supplied
 module "vpc" {
-  count  = var.aws.create_vpc == "1" ? 1 : 0
+  count  = local.use_existing_vpc ? 0 : 1
   source = "terraform-aws-modules/vpc/aws"
 
   name                 = "vpc_${var.general.key_name}_${var.general.attack_range_name}"
@@ -20,10 +26,12 @@ module "vpc" {
 
 # Use the public or private subnet CIDRs based on var.aws.use_public_ips
 locals {
-  ar_subnets = var.aws.create_vpc == "1" ? (
+  ar_subnets = local.use_existing_vpc ? (
+    [data.aws_subnet.private_subnet_1[0].cidr_block, data.aws_subnet.private_subnet_2[0].cidr_block]
+    ) : (
     var.aws.use_public_ips == "1" ? module.vpc[0].public_subnets : module.vpc[0].private_subnets
-  ) : [data.aws_subnet.private_subnet_1.cidr_block, data.aws_subnet.private_subnet_2.cidr_block]
-  vpc_id = var.aws.create_vpc == "1" ? module.vpc[0].vpc_id : var.aws.vpc_id
+  )
+  vpc_id = local.use_existing_vpc ? var.aws.vpc_id : module.vpc[0].vpc_id
 }
 
 # Create AWS Security Groups

@@ -77,16 +77,15 @@ aws:
 
   domain_controller_ip: "10.0.1.20"
   network_cidr: "10.0.1.0/24"
-  create_vpc: "0"
-  # Enable/disable creation of VPC by setting this to 1 or 0.
 
   first_dynamic_ip: 14
 
+  use_public_ips: "1"
+
+  # VPC ID and subnet arn for byo vpc in AWS.
   vpc_id: ""
   private_subnet_1: ""
   private_subnet_2: ""
-  # VPC ID and subnet arn for byo vpc in AWS.
-  use_public_ips: "1"
 
   windows_ami: ""
 
