@@ -72,40 +72,40 @@ resource "aws_instance" "snort_sensor" {
 
 resource "aws_eip" "snort_ip" {
   count    = (var.snort_server.snort_server == "1") && (var.aws.use_elastic_ips == "1") ? 1 : 0
-  instance    = aws_instance.snort_sensor[0].id
+  instance = aws_instance.snort_sensor[0].id
 }
 
 resource "aws_ec2_traffic_mirror_target" "snort_target" {
-  count = var.snort_server.snort_server == "1" ? 1 : 0
+  count                = var.snort_server.snort_server == "1" ? 1 : 0
   description          = "VPC Tap for Snort"
   network_interface_id = aws_instance.snort_sensor[0].primary_network_interface_id
 }
 
 resource "aws_ec2_traffic_mirror_filter" "snort_filter" {
-  count = var.snort_server.snort_server == "1" ? 1 : 0
+  count       = var.snort_server.snort_server == "1" ? 1 : 0
   description = "Snort Mirror Filter - Allow All"
 }
 
 resource "aws_ec2_traffic_mirror_filter_rule" "snort_outbound" {
-  count = var.snort_server.snort_server == "1" ? 1 : 0
-  description = "Snort Outbound Rule"
+  count                    = var.snort_server.snort_server == "1" ? 1 : 0
+  description              = "Snort Outbound Rule"
   traffic_mirror_filter_id = aws_ec2_traffic_mirror_filter.snort_filter[0].id
-  destination_cidr_block = "0.0.0.0/0"
-  source_cidr_block = "0.0.0.0/0"
-  rule_number = 1
-  rule_action = "accept"
-  traffic_direction = "egress"
+  destination_cidr_block   = "0.0.0.0/0"
+  source_cidr_block        = "0.0.0.0/0"
+  rule_number              = 1
+  rule_action              = "accept"
+  traffic_direction        = "egress"
 }
 
 resource "aws_ec2_traffic_mirror_filter_rule" "snort_inbound" {
-  count = var.snort_server.snort_server == "1" ? 1 : 0
-  description = "Snort Inbound Rule"
+  count                    = var.snort_server.snort_server == "1" ? 1 : 0
+  description              = "Snort Inbound Rule"
   traffic_mirror_filter_id = aws_ec2_traffic_mirror_filter.snort_filter[0].id
-  destination_cidr_block = "0.0.0.0/0"
-  source_cidr_block = "0.0.0.0/0"
-  rule_number = 1
-  rule_action = "accept"
-  traffic_direction = "ingress"
+  destination_cidr_block   = "0.0.0.0/0"
+  source_cidr_block        = "0.0.0.0/0"
+  rule_number              = 1
+  rule_action              = "accept"
+  traffic_direction        = "ingress"
 }
 
 resource "aws_ec2_traffic_mirror_session" "snort_windows_session" {
@@ -115,7 +115,7 @@ resource "aws_ec2_traffic_mirror_session" "snort_windows_session" {
   traffic_mirror_filter_id = aws_ec2_traffic_mirror_filter.snort_filter[0].id
   traffic_mirror_target_id = aws_ec2_traffic_mirror_target.snort_target[0].id
   network_interface_id     = var.windows_server_instances[count.index].primary_network_interface_id
-  session_number           = 100
+  session_number           = 200
 }
 
 resource "aws_ec2_traffic_mirror_session" "snort_linux_session" {
@@ -125,5 +125,5 @@ resource "aws_ec2_traffic_mirror_session" "snort_linux_session" {
   traffic_mirror_filter_id = aws_ec2_traffic_mirror_filter.snort_filter[0].id
   traffic_mirror_target_id = aws_ec2_traffic_mirror_target.snort_target[0].id
   network_interface_id     = var.linux_server_instances[count.index].primary_network_interface_id
-  session_number           = 100
+  session_number           = 200
 }
