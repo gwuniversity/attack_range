@@ -6,7 +6,7 @@ data "aws_ami" "caldera_server" {
 
   filter {
     name   = "name"
-    values = ["debian-12-amd64-2024*"]
+    values = ["debian-12-amd64-2025*"]
   }
 
   filter {

@@ -1,5 +1,5 @@
 - hosts: all
-  gather_facts: False
+  gather_facts: true
   become: true
   roles:
     - set_hostname_linux

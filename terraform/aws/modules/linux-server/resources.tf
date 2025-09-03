@@ -19,7 +19,7 @@ data "aws_ami" "linux_server" {
 resource "aws_instance" "linux_server" {
   count                       = length(var.linux_servers)
   ami                         = data.aws_ami.linux_server[count.index].id
-  instance_type               = "t3.xlarge"
+  instance_type               = "t3.large"
   key_name                    = var.general.key_name
   subnet_id                   = var.aws.use_public_ips == "1" ? var.ec2_subnet_id : var.aws.private_subnet_2
   vpc_security_group_ids      = var.vpc_security_group_ids
