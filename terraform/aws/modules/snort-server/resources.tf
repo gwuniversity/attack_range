@@ -19,7 +19,7 @@ data "aws_ami" "snort_server" {
 resource "aws_instance" "snort_sensor" {
   count                       = var.snort_server.snort_server == "1" ? 1 : 0
   ami                         = data.aws_ami.snort_server[0].id
-  instance_type               = "m5.2xlarge"
+  instance_type               = "r6i.xlarge"
   key_name                    = var.general.key_name
   subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_1 : var.ec2_subnet_id
   vpc_security_group_ids      = var.vpc_security_group_ids

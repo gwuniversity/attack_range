@@ -18,7 +18,7 @@ data "aws_ami" "caldera_server" {
 resource "aws_instance" "caldera_server" {
   count                       = var.caldera_server.caldera_server == "1" ? 1 : 0
   ami                         = data.aws_ami.caldera_server[0].id
-  instance_type               = "m5.xlarge"
+  instance_type               = "r6i.large"
   key_name                    = var.general.key_name
   subnet_id                   = var.aws.use_public_ips == "1" ? var.ec2_subnet_id : var.aws.private_subnet_1
   vpc_security_group_ids      = var.vpc_security_group_ids

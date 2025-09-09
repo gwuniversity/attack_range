@@ -76,7 +76,7 @@ resource "aws_iam_role_policy" "splunk_logging_policy" {
 resource "aws_instance" "splunk-server" {
   count                       = var.splunk_server.byo_splunk == "0" ? 1 : 0
   ami                         = data.aws_ami.splunk_server[0].id
-  instance_type               = "t3.2xlarge"
+  instance_type               = "r6i.xlarge"
   key_name                    = var.general.key_name
   subnet_id                   = var.aws.use_public_ips == "0" ? var.aws.private_subnet_1 : var.ec2_subnet_id
   vpc_security_group_ids      = var.vpc_security_group_ids

@@ -17,7 +17,7 @@ data "aws_ami" "edge_processor" {
 resource "aws_instance" "edge_processor" {
   count                  = var.edge_processor.edge_processor == "1" ? 1 : 0
   ami                    = data.aws_ami.edge_processor[0].id
-  instance_type          = "t3.2xlarge"
+  instance_type          = "r6i.xlarge"
   key_name               = var.general.key_name
   subnet_id              = var.aws.private_subnet_1
   private_ip             = var.edge_processor.edge_processor_ip
