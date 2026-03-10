@@ -1,7 +1,20 @@
 ---
+- name: Copy SentinelOne agent installer
+  win_copy:
+    src: "../../apps/{{ general.sentinelone_windows_agent }}"
+    dest: "{{ ansible_env.TEMP }}\\{{ general.sentinelone_windows_agent }}"
+  when: windows_servers.install_sentinelone == "1" and general.sentinelone_token != ""
+
 - name: Install SentinelOne agent
   win_package:
-    path: "../../apps/{{ general.sentinelone_windows_agent }}"
+    path: "{{ ansible_env.TEMP }}\\{{ general.sentinelone_windows_agent }}"
     arguments: "/q SITE_TOKEN={{ general.sentinelone_token }}"
     state: present
+  register: sentinelone_install_result
+  when: windows_servers.install_sentinelone == "1" and general.sentinelone_token != ""
+
+- name: Remove SentinelOne agent installer
+  win_file:
+    path: "{{ ansible_env.TEMP }}\\{{ general.sentinelone_windows_agent }}"
+    state: absent
   when: windows_servers.install_sentinelone == "1" and general.sentinelone_token != ""
