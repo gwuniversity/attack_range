@@ -3,6 +3,7 @@
   win_copy:
     src: "../../apps/{{ general.cortex_xdr_windows_agent }}"
     dest: "{{ ansible_env.TEMP }}\\{{ general.cortex_xdr_windows_agent }}"
+  when: windows_servers.install_cortex_xdr == "1"
 
 - name: Install Cortex XDR agent
   win_package:
@@ -10,12 +11,14 @@
     arguments: "/qn /l*v {{ ansible_env.TEMP }}\\cortex_xdr_install.log"
     state: present
   register: xdr_install_result
+  when: windows_servers.install_cortex_xdr == "1"
 
 - name: Remove Cortex XDR agent installer
   win_file:
     path: "{{ ansible_env.TEMP }}\\{{ general.cortex_xdr_windows_agent }}"
     state: absent
+  when: windows_servers.install_cortex_xdr == "1"
 
 - name: Reboot if required
   win_reboot:
-  when: xdr_install_result.reboot_required
+  when: xdr_install_result.reboot_required and windows_servers.install_cortex_xdr == "1"

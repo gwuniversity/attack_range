@@ -40,6 +40,13 @@ general:
   cortex_xdr_windows_agent: ""
   # Specify the name of the Cortex XDR Agent.
 
+  sentinelone_ubuntu_agent: ""
+  sentinelone_windows_agent: ""
+  # Specify the name of the SentinelOne Agent.
+
+  sentinelone_token: ""
+  # SentinelOne management token for agent registration.
+
   cisco_secure_endpoint: "0"
   # Enable/Disable Cisco Secure Endpoint log forwarding to Splunk by setting this to 1 or 0.
   cisco_secure_endpoint_api_id: ""
@@ -236,6 +243,9 @@ windows_servers_default:
   install_cortex_xdr: "0"
   # Install Cortex XDR agents by setting this to 1.
 
+  install_sentinelone: "0"
+  # Install SentinelOne agents by setting this to 1.
+
   install_caldera_agent: "0"
   # Install a MITRE Caldera agent that connects to the Caldera Server.
 
@@ -275,6 +285,9 @@ linux_servers_default:
 
   install_cortex_xdr: "0"
   # Install Cortex XDR agents by setting this to 1.
+
+  install_sentinelone: "0"
+  # Install SentinelOne agents by setting this to 1.
 
   install_crowdstrike: "0"
   # Install CrowdStrike Falcon by setting this to 1.

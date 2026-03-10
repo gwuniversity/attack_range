@@ -1,0 +1,30 @@
+---
+- name: Copy SentinelOne agent
+  copy:
+    src: "../../apps/{{ general.sentinelone_ubuntu_agent }}"
+    dest: "/tmp/{{ general.sentinelone_ubuntu_agent }}"
+  when: linux_servers.install_sentinelone == "1"
+
+- name: Install SentinelOne agent
+  become: true
+  apt:
+    deb: "/tmp/{{ general.sentinelone_ubuntu_agent }}"
+    state: present
+    force: yes
+  when: linux_servers.install_sentinelone == "1"
+
+- name: Set SentinelOne management token
+  become: true
+  command: "/opt/sentinelone/bin/sentinelctl management token set {{ general.sentinelone_token }}"
+  when: linux_servers.install_sentinelone == "1" and general.sentinelone_token != ""
+
+- name: Start SentinelOne agent
+  become: true
+  command: "/opt/sentinelone/bin/sentinelctl control start"
+  when: linux_servers.install_sentinelone == "1"
+
+- name: Clean up
+  file:
+    path: "/tmp/{{ general.sentinelone_ubuntu_agent }}"
+    state: absent
+  when: linux_servers.install_sentinelone == "1"

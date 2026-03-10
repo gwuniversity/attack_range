@@ -3,6 +3,7 @@
   copy:
     src: "../../apps/{{ general.cortex_xdr_ubuntu_agent }}"
     dest: "/tmp/{{ general.cortex_xdr_ubuntu_agent }}"
+  when: linux_servers.install_cortex_xdr == "1"
 
 - name: Install Cortex XDR agent
   become: true
@@ -24,8 +25,10 @@
         deb: "/tmp/{{ general.cortex_xdr_ubuntu_agent }}"
         state: present
         force: yes
+  when: linux_servers.install_cortex_xdr == "1"
 
 - name: Clean up
   file:
     path: "/tmp"
     state: absent
+  when: linux_servers.install_cortex_xdr == "1"

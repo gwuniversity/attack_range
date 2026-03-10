@@ -15,6 +15,8 @@
     - contentctl
     - crowdstrike_falcon_agent_linux
     - cisco_secure_endpoint_linux
+    - cortex_xdr_endpoint_linux
+    - sentinelone_endpoint_linux
     - role: caldera_agent
       vars:
         caldera_agent_server_type: "linux"

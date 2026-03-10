@@ -1,0 +1,7 @@
+---
+- name: Install SentinelOne agent
+  win_package:
+    path: "../../apps/{{ general.sentinelone_windows_agent }}"
+    arguments: "/q SITE_TOKEN={{ general.sentinelone_token }}"
+    state: present
+  when: windows_servers.install_sentinelone == "1" and general.sentinelone_token != ""
