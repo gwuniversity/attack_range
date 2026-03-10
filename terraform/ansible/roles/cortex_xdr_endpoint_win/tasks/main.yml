@@ -18,7 +18,3 @@
     path: "{{ ansible_env.TEMP }}\\{{ general.cortex_xdr_windows_agent }}"
     state: absent
   when: windows_servers.install_cortex_xdr == "1"
-
-- name: Reboot if required
-  win_reboot:
-  when: xdr_install_result.reboot_required and windows_servers.install_cortex_xdr == "1"
